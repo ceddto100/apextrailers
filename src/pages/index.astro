@@ -1,0 +1,245 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import TrailerCard from '../components/TrailerCard.astro';
+import BookCard from '../components/BookCard.astro';
+import FilterBar from '../components/FilterBar.astro';
+import Footer from '../components/Footer.astro';
+import { BOOKS } from '../data/books';
+---
+
+<Base>
+  <Nav />
+
+  <!-- PAGE: Home -->
+  <div id="page-home" class="page active">
+    <Hero />
+  </div>
+
+  <!-- PAGE: Trailers -->
+  <div id="page-trailers" class="page">
+    <section class="pt-28 pb-16 px-6 md:px-12">
+      <div class="max-w-4xl mx-auto">
+        <!-- Section header -->
+        <div class="mb-12 gsap-fade-up">
+          <span class="font-mono text-xs tracking-widest uppercase text-accent mb-2 block">Cinematics</span>
+          <h2 class="font-display text-[clamp(36px,6vw,64px)] tracking-wide leading-[0.95] mb-4">TRAILERS</h2>
+          <p class="text-text-2 max-w-lg">Watch cinematic previews for each title. Click "About This Book" to expand details and purchase.</p>
+        </div>
+
+        <!-- Trailer cards -->
+        {BOOKS.map((book, i) => (
+          <TrailerCard book={book} index={i} />
+        ))}
+      </div>
+    </section>
+    <Footer />
+  </div>
+
+  <!-- PAGE: Books -->
+  <div id="page-books" class="page">
+    <section class="pt-28 pb-16 px-6 md:px-12">
+      <div class="max-w-6xl mx-auto">
+        <!-- Section header -->
+        <div class="mb-8 gsap-fade-up">
+          <span class="font-mono text-xs tracking-widest uppercase text-accent mb-2 block">Library</span>
+          <h2 class="font-display text-[clamp(36px,6vw,64px)] tracking-wide leading-[0.95] mb-4">ALL BOOKS</h2>
+          <p class="text-text-2 max-w-lg mb-6">Browse the full collection. Filter by genre. Every title is DRM-free and delivered instantly.</p>
+        </div>
+
+        <!-- Filter bar -->
+        <FilterBar />
+
+        <!-- Book grid -->
+        <div class="book-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {BOOKS.map((book) => (
+            <BookCard book={book} />
+          ))}
+        </div>
+      </div>
+    </section>
+    <Footer />
+  </div>
+</Base>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initPageAnimations() {
+    // ScrollTrigger reveals for trailer cards
+    gsap.utils.toArray('.trailer-card').forEach((card: any, i: number) => {
+      gsap.fromTo(card,
+        { opacity: 0, y: 48 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 88%',
+            once: true,
+          },
+          delay: i * 0.05,
+        }
+      );
+    });
+
+    // ScrollTrigger reveals for gsap-fade-up elements
+    gsap.utils.toArray('.gsap-fade-up').forEach((el: any) => {
+      gsap.fromTo(el,
+        { opacity: 0, y: 32 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 90%',
+            once: true,
+          },
+        }
+      );
+    });
+
+    // Book card stagger reveal
+    gsap.utils.toArray('.book-card').forEach((card: any, i: number) => {
+      gsap.fromTo(card,
+        { opacity: 0, y: 32 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 90%',
+            once: true,
+          },
+          delay: i * 0.06,
+        }
+      );
+    });
+  }
+
+  // Book panel toggle/close logic
+  function initPanels() {
+    let openPanelId: string | null = null;
+
+    function openPanel(panelId: string) {
+      const panel = document.getElementById(panelId);
+      const toggle = document.querySelector(`[data-panel-id="${panelId}"].panel-toggle`);
+      const icon = toggle?.querySelector('.toggle-icon');
+      const label = toggle?.querySelector('.toggle-label');
+      if (!panel) return;
+
+      if (openPanelId && openPanelId !== panelId) {
+        closePanel(openPanelId);
+      }
+
+      openPanelId = panelId;
+      panel.setAttribute('aria-hidden', 'false');
+
+      gsap.to(panel, {
+        height: 'auto',
+        opacity: 1,
+        duration: 0.5,
+        ease: 'power3.out',
+      });
+
+      if (icon) gsap.to(icon, { rotation: 180, duration: 0.3 });
+      if (label) label.textContent = 'Hide Details';
+    }
+
+    function closePanel(panelId: string) {
+      const panel = document.getElementById(panelId);
+      const toggle = document.querySelector(`[data-panel-id="${panelId}"].panel-toggle`);
+      const icon = toggle?.querySelector('.toggle-icon');
+      const label = toggle?.querySelector('.toggle-label');
+      if (!panel) return;
+
+      panel.setAttribute('aria-hidden', 'true');
+      if (openPanelId === panelId) openPanelId = null;
+
+      gsap.to(panel, {
+        height: 0,
+        opacity: 0,
+        duration: 0.35,
+        ease: 'power2.in',
+      });
+
+      if (icon) gsap.to(icon, { rotation: 0, duration: 0.3 });
+      if (label) label.textContent = 'About This Book';
+    }
+
+    document.querySelectorAll('.panel-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-panel-id')!;
+        if (openPanelId === id) {
+          closePanel(id);
+        } else {
+          openPanel(id);
+        }
+      });
+    });
+
+    document.querySelectorAll('.panel-close').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-panel-id')!;
+        closePanel(id);
+      });
+    });
+  }
+
+  // Genre filter logic
+  function initFilter() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.book-card');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update active button
+        filterBtns.forEach(b => {
+          b.classList.remove('active', 'bg-accent', 'text-bg', 'border-accent');
+          b.classList.add('text-text-2', 'border-border');
+        });
+        btn.classList.add('active', 'bg-accent', 'text-bg', 'border-accent');
+        btn.classList.remove('text-text-2', 'border-border');
+
+        const genre = btn.getAttribute('data-genre');
+
+        const filtered = genre === 'all'
+          ? [...cards]
+          : [...cards].filter(c => c.getAttribute('data-genre') === genre);
+        const hidden = [...cards].filter(c => !filtered.includes(c));
+
+        // Hide non-matching
+        gsap.to(hidden, {
+          opacity: 0,
+          scale: 0.95,
+          duration: 0.2,
+          ease: 'power2.in',
+          onComplete: () => hidden.forEach((c: any) => c.style.display = 'none'),
+        });
+
+        // Show matching with stagger
+        filtered.forEach((c: any) => c.style.display = 'flex');
+        gsap.fromTo(filtered,
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out', stagger: 0.06 }
+        );
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initPageAnimations();
+    initPanels();
+    initFilter();
+  });
+</script>

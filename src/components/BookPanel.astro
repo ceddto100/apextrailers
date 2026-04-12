@@ -1,0 +1,80 @@
+---
+import type { Book } from '../data/books';
+
+interface Props {
+  book: Book;
+}
+
+const { book } = Astro.props;
+---
+
+<!-- Trigger button -->
+<button
+  class="panel-toggle font-mono text-xs tracking-widest uppercase text-text-2 flex items-center gap-2 py-3 hover:text-accent transition-colors duration-200"
+  data-panel-id={`panel-${book.id}`}
+>
+  <span class="toggle-icon transition-transform duration-300 inline-block">&#9660;</span>
+  <span class="toggle-label">About This Book</span>
+</button>
+
+<!-- Expandable panel -->
+<div
+  id={`panel-${book.id}`}
+  class="book-panel overflow-hidden"
+  style="height: 0; opacity: 0;"
+  aria-hidden="true"
+>
+  <div class="glass rounded-2xl p-4 md:p-6 mt-2 border-l-2" style={`border-left-color: ${book.accentHex};`}>
+    <div class="flex flex-col md:flex-row gap-6">
+      <!-- Cover art -->
+      <div
+        class="book-cover flex-shrink-0 w-24 rounded-lg overflow-hidden flex items-center justify-center"
+        style={`background: ${book.gradient}; aspect-ratio: 2/3;`}
+      >
+        <span class="font-display text-sm text-center px-2 leading-tight text-white/90">
+          {book.title}
+        </span>
+      </div>
+
+      <!-- Book details -->
+      <div class="flex flex-col gap-3 flex-1 min-w-0">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="font-mono text-xs tracking-widest uppercase mb-1" style={`color: ${book.accentHex};`}>{book.genre}</p>
+            <h3 class="font-display text-2xl tracking-wide">{book.title}</h3>
+          </div>
+          <span class="font-mono text-xl flex-shrink-0" style={`color: ${book.accentHex};`}>{book.price}</span>
+        </div>
+
+        <p class="text-sm text-text-2 leading-relaxed italic">{book.tagline}</p>
+        <p class="text-sm text-text-2 leading-relaxed">{book.description}</p>
+
+        <!-- Meta row -->
+        <div class="flex flex-wrap gap-4 md:gap-6 pt-2 border-t border-border font-mono text-xs text-text-3">
+          <span>Pages: <span class="text-text">{book.pages}</span></span>
+          <span>Format: <span class="text-text">Digital</span></span>
+          <span>DRM: <span class="text-text">None</span></span>
+        </div>
+
+        <!-- CTA row -->
+        <div class="flex flex-wrap items-center gap-4 pt-2">
+          <a
+            href={book.buyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase px-6 py-3 text-bg rounded-full hover:bg-white transition-colors duration-200"
+            style={`background: ${book.accentHex};`}
+          >
+            Get This Book &mdash; {book.price} &rarr;
+          </a>
+          <button
+            class="panel-close font-mono text-xs text-text-3 hover:text-text transition-colors"
+            data-panel-id={`panel-${book.id}`}
+          >
+            &#10005; Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

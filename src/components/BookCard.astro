@@ -1,0 +1,66 @@
+---
+import type { Book } from '../data/books';
+
+interface Props {
+  book: Book;
+}
+
+const { book } = Astro.props;
+---
+
+<div
+  class="book-card flex flex-col rounded-2xl overflow-hidden border border-border bg-surface cursor-pointer"
+  data-genre={book.genre}
+  style={`--card-accent: ${book.accentHex};`}
+>
+  <!-- Cover art -->
+  <div
+    class="w-full flex items-center justify-center p-6"
+    style={`background: ${book.gradient}; aspect-ratio: 3/2;`}
+  >
+    <span class="font-display text-2xl md:text-3xl text-center text-white/90 leading-tight px-4">
+      {book.title}
+    </span>
+  </div>
+
+  <!-- Info -->
+  <div class="flex flex-col gap-3 p-5 flex-1">
+    <div class="flex items-center justify-between">
+      <span
+        class="font-mono text-[10px] tracking-widest uppercase"
+        style={`color: ${book.accentHex};`}
+      >
+        {book.genre}
+      </span>
+      <span class="font-mono text-sm" style={`color: ${book.accentHex};`}>{book.price}</span>
+    </div>
+
+    <h3 class="font-display text-xl tracking-wide">{book.title}</h3>
+    <p class="text-sm text-text-2 leading-relaxed italic">{book.tagline}</p>
+
+    <div class="flex items-center gap-4 mt-auto pt-3 border-t border-border">
+      <span class="font-mono text-xs text-text-3">{book.pages} pages</span>
+      <span class="font-mono text-xs text-text-3">Digital</span>
+      <span class="font-mono text-xs text-text-3">No DRM</span>
+    </div>
+
+    <a
+      href={book.buyUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center justify-center gap-2 font-mono text-xs tracking-widest uppercase px-5 py-2.5 text-bg rounded-full hover:bg-white transition-colors duration-200 mt-2"
+      style={`background: ${book.accentHex};`}
+    >
+      Get Book &rarr;
+    </a>
+  </div>
+</div>
+
+<style>
+  .book-card:hover {
+    box-shadow:
+      0 0 0 1px var(--card-accent),
+      0 20px 60px color-mix(in srgb, var(--card-accent) 12%, transparent),
+      0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+</style>

@@ -1,0 +1,33 @@
+---
+import { BOOKS } from '../data/books';
+---
+
+<footer class="border-t border-border py-12 px-6 md:px-12">
+  <div class="max-w-5xl mx-auto">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <!-- Logo -->
+      <div class="flex items-baseline gap-2">
+        <span class="font-display text-2xl tracking-widest text-accent">APEX</span>
+        <span class="font-mono text-xs text-text-3 tracking-widest">/TRAILERS</span>
+      </div>
+
+      <!-- Links -->
+      <div class="flex flex-wrap gap-6 font-mono text-xs text-text-3">
+        <span>{BOOKS.length} titles available</span>
+        <span>&middot;</span>
+        <span>Digital delivery</span>
+        <span>&middot;</span>
+        <span>DRM-free</span>
+      </div>
+    </div>
+
+    <div class="mt-8 pt-6 border-t border-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <p class="font-mono text-xs text-text-3">
+        &copy; {new Date().getFullYear()} Apex Trailers. All rights reserved.
+      </p>
+      <p class="font-mono text-[10px] text-text-3 tracking-widest uppercase">
+        Built with intention
+      </p>
+    </div>
+  </div>
+</footer>

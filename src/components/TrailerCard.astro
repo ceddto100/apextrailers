@@ -1,0 +1,63 @@
+---
+import type { Book } from '../data/books';
+import BookPanel from './BookPanel.astro';
+
+interface Props {
+  book: Book;
+  index: number;
+}
+
+const { book, index } = Astro.props;
+const paddedIndex = String(index + 1).padStart(2, '0');
+---
+
+<article class="trailer-card border border-border rounded-2xl overflow-hidden bg-surface mb-8">
+  <!-- Header -->
+  <div class="flex items-center justify-between px-4 md:px-6 py-4 border-b border-border">
+    <div class="flex items-center gap-3">
+      <span class="font-mono text-xs text-text-3">[{paddedIndex}]</span>
+      <h2 class="font-display text-xl md:text-2xl tracking-wide">{book.title}</h2>
+    </div>
+    <span
+      class="font-mono text-[10px] tracking-widest uppercase px-3 py-1 rounded-full border"
+      style={`color: ${book.accentHex}; border-color: ${book.accentHex}30;`}
+    >
+      {book.genre}
+    </span>
+  </div>
+
+  <!-- Video area -->
+  <div class="px-4 md:px-6 py-4">
+    {book.youtubeId ? (
+      <div class="video-wrap relative w-full rounded-xl overflow-hidden" style="aspect-ratio: 16/9;">
+        <iframe
+          src={`https://www.youtube.com/embed/${book.youtubeId}?rel=0&modestbranding=1&color=white&iv_load_policy=3`}
+          title={`${book.title} — Official Trailer`}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          loading="lazy"
+          class="absolute inset-0 w-full h-full border-0"
+        />
+      </div>
+    ) : (
+      <div class="video-placeholder relative w-full rounded-xl overflow-hidden" style={`aspect-ratio: 16/9; background: var(--surface-2); border: 1px solid var(--border);`}>
+        <div class="absolute inset-0 flex flex-col items-center justify-center gap-4">
+          <div class="play-ring w-16 h-16 rounded-full border border-border-2 flex items-center justify-center">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-text-3 ml-1">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+          <p class="font-mono text-xs tracking-widest text-text-3 uppercase">Trailer Coming Soon</p>
+        </div>
+        <div class="pulse-ring absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
+          <div class="w-16 h-16 rounded-full border" style={`border-color: ${book.accentHex}; opacity: 0.2;`}></div>
+        </div>
+      </div>
+    )}
+  </div>
+
+  <!-- Book panel toggle + panel -->
+  <div class="px-4 md:px-6 pb-4">
+    <BookPanel book={book} />
+  </div>
+</article>
