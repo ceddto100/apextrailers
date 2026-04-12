@@ -1,0 +1,82 @@
+/* Hero animations */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  background:
+    radial-gradient(ellipse 80% 70% at 65% 35%, rgba(124, 58, 237, 0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 20% 75%, rgba(167, 139, 250, 0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 30% 40% at 85% 80%, rgba(76, 29, 149, 0.1) 0%, transparent 50%);
+  animation: meshDrift 16s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes meshDrift {
+  0%   { transform: translate(0%, 0%) scale(1); }
+  33%  { transform: translate(1.5%, -1%) scale(1.03); }
+  66%  { transform: translate(-1%, 1.5%) scale(0.98); }
+  100% { transform: translate(2%, -2%) scale(1.04); }
+}
+
+.hero-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: clamp(80px, 16vw, 220px);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.04);
+  user-select: none;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-title-line-1,
+.hero-title-line-2 {
+  clip-path: inset(0 100% 0 0);
+  display: block;
+}
+
+.glass-widget-left  { opacity: 0; transform: translateX(-20px); }
+.glass-widget-right { opacity: 0; transform: translateX(20px); }
+
+/* Progress bar in hero widget */
+@keyframes progressLoop {
+  0%   { width: 0%; }
+  100% { width: 100%; }
+}
+.progress-bar {
+  animation: progressLoop 8s linear infinite;
+}
+
+/* Book card hover */
+.book-card {
+  transition: transform 0.3s var(--ease-out-expo), box-shadow 0.3s ease;
+}
+.book-card:hover {
+  transform: translateY(-6px);
+}
+
+/* Trailer card */
+.trailer-card {
+  will-change: opacity, transform;
+}
+
+/* Pulse ring on placeholder */
+@keyframes pulseRing {
+  0% { transform: scale(1); opacity: 0.2; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+.pulse-ring > div {
+  animation: pulseRing 2s ease-out infinite;
+}

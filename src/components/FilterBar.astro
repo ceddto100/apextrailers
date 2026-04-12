@@ -1,0 +1,21 @@
+---
+import { BOOKS } from '../data/books';
+
+const genres = ['All', ...new Set(BOOKS.map(b => b.genre))];
+---
+
+<div class="filter-bar flex flex-wrap gap-2 mb-8">
+  {genres.map((genre) => (
+    <button
+      class:list={[
+        'filter-btn font-mono text-xs tracking-widest uppercase px-4 py-2 rounded-full border transition-all duration-200',
+        genre === 'All'
+          ? 'active bg-accent text-bg border-accent'
+          : 'text-text-2 border-border hover:border-accent hover:text-accent',
+      ]}
+      data-genre={genre === 'All' ? 'all' : genre}
+    >
+      {genre}
+    </button>
+  ))}
+</div>
