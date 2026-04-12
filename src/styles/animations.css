@@ -1,63 +1,180 @@
-/* Hero animations */
-.hero-bg {
-  position: absolute;
-  inset: 0;
-  background: var(--bg);
-  overflow: hidden;
-}
+/* ==========================================
+   HERO — Globe, Rays, Particles
+   ========================================== */
 
-.hero-bg::before {
-  content: '';
-  position: absolute;
-  inset: -50%;
-  background:
-    radial-gradient(ellipse 80% 70% at 65% 35%, rgba(124, 58, 237, 0.22) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 60% at 20% 75%, rgba(167, 139, 250, 0.07) 0%, transparent 55%),
-    radial-gradient(ellipse 30% 40% at 85% 80%, rgba(76, 29, 149, 0.1) 0%, transparent 50%);
-  animation: meshDrift 16s ease-in-out infinite alternate;
-  will-change: transform;
-}
-
-@keyframes meshDrift {
-  0%   { transform: translate(0%, 0%) scale(1); }
-  33%  { transform: translate(1.5%, -1%) scale(1.03); }
-  66%  { transform: translate(-1%, 1.5%) scale(0.98); }
-  100% { transform: translate(2%, -2%) scale(1.04); }
-}
-
-.hero-watermark {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-display);
-  font-size: clamp(80px, 16vw, 220px);
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.04);
-  user-select: none;
-  pointer-events: none;
-  z-index: 0;
-}
-
+/* Title clip-path reveal */
 .hero-title-line-1,
 .hero-title-line-2 {
   clip-path: inset(0 100% 0 0);
   display: block;
 }
 
-.glass-widget-left  { opacity: 0; transform: translateX(-20px); }
-.glass-widget-right { opacity: 0; transform: translateX(20px); }
+/* Globe container — right side, vertically centered */
+.hero-globe-wrap {
+  position: absolute;
+  top: 50%;
+  right: 2%;
+  transform: translateY(-50%);
+  width: 340px;
+  height: 340px;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+@media (min-width: 768px) {
+  .hero-globe-wrap {
+    right: 6%;
+    width: 480px;
+    height: 480px;
+  }
+}
+@media (min-width: 1024px) {
+  .hero-globe-wrap {
+    right: 8%;
+    width: 580px;
+    height: 580px;
+  }
+}
+@media (min-width: 1280px) {
+  .hero-globe-wrap {
+    right: 10%;
+    width: 640px;
+    height: 640px;
+  }
+}
+/* On mobile, globe sits behind text at reduced opacity */
+@media (max-width: 767px) {
+  .hero-globe-wrap {
+    right: -10%;
+    opacity: 0;
+  }
+}
 
-/* Progress bar in hero widget */
-@keyframes progressLoop {
-  0%   { width: 0%; }
-  100% { width: 100%; }
+#hero-globe {
+  width: 100%;
+  height: 100%;
 }
-.progress-bar {
-  animation: progressLoop 8s linear infinite;
+
+/* Ambient radial glow behind globe */
+.hero-ambient-glow {
+  position: absolute;
+  top: 50%;
+  right: 12%;
+  transform: translate(30%, -50%);
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(124, 58, 237, 0.18) 0%,
+    rgba(124, 58, 237, 0.06) 35%,
+    rgba(76, 29, 149, 0.02) 60%,
+    transparent 75%
+  );
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(40px);
 }
+@media (max-width: 767px) {
+  .hero-ambient-glow {
+    right: -20%;
+    width: 400px;
+    height: 400px;
+  }
+}
+
+/* Light rays — soft gradient streaks */
+.hero-rays {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-ray {
+  position: absolute;
+  right: 15%;
+  width: 160%;
+  height: 2px;
+  transform-origin: right center;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(167, 139, 250, 0.04) 20%,
+    rgba(167, 139, 250, 0.07) 45%,
+    rgba(167, 139, 250, 0.04) 70%,
+    transparent 100%
+  );
+  filter: blur(12px);
+}
+.hero-ray--wide {
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(124, 58, 237, 0.03) 20%,
+    rgba(124, 58, 237, 0.06) 50%,
+    rgba(124, 58, 237, 0.03) 75%,
+    transparent 100%
+  );
+  filter: blur(25px);
+}
+
+/* Slow ray drift animation */
+@keyframes rayDrift {
+  0%   { transform: var(--ray-base-transform) translateX(0); }
+  50%  { transform: var(--ray-base-transform) translateX(30px); }
+  100% { transform: var(--ray-base-transform) translateX(0); }
+}
+
+/* Floating particles */
+.hero-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-particle {
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: rgba(167, 139, 250, 0.5);
+  animation: particleFloat var(--dur) var(--delay) ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(0) translateX(0) scale(0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.8;
+    transform: translateY(-10px) translateX(calc(var(--drift) * 0.1)) scale(1);
+  }
+  50% {
+    opacity: 0.5;
+  }
+  92% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-180px) translateX(var(--drift)) scale(0.3);
+    opacity: 0;
+  }
+}
+
+
+/* ==========================================
+   NON-HERO ANIMATIONS (unchanged)
+   ========================================== */
 
 /* Book card hover */
 .book-card {
@@ -72,11 +189,20 @@
   will-change: opacity, transform;
 }
 
-/* Pulse ring on placeholder */
+/* Pulse ring on video placeholder */
 @keyframes pulseRing {
-  0% { transform: scale(1); opacity: 0.2; }
+  0%   { transform: scale(1); opacity: 0.2; }
   100% { transform: scale(1.5); opacity: 0; }
 }
 .pulse-ring > div {
   animation: pulseRing 2s ease-out infinite;
+}
+
+/* Progress bar in glass widget */
+@keyframes progressLoop {
+  0%   { width: 0%; }
+  100% { width: 100%; }
+}
+.progress-bar {
+  animation: progressLoop 8s linear infinite;
 }
