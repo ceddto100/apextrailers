@@ -49,6 +49,20 @@ const { book } = Astro.props;
         <p class="text-sm text-text-2 leading-relaxed italic">{book.tagline}</p>
         <p class="text-sm text-text-2 leading-relaxed">{book.description}</p>
 
+        {book.ebookEmbedUrl && (
+          <div class="rounded-xl overflow-hidden border border-border bg-surface">
+            <iframe
+              src={book.ebookEmbedUrl}
+              title={`${book.title} — Audiobook Preview`}
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              class="w-full border-0"
+              style="height: 420px;"
+            />
+          </div>
+        )}
+
         <!-- Meta row -->
         <div class="flex flex-wrap gap-4 md:gap-6 pt-2 border-t border-border font-mono text-xs text-text-3">
           <span>Pages: <span class="text-text">{book.pages}</span></span>
