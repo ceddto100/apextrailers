@@ -10,7 +10,8 @@ export interface Book {
   buyUrl: string;
   platformLabel: string;
   youtubeId: string;
-  coverImageUrl: string;
+  ebookEmbedUrl: string;
+  secondVideoEmbedUrl: string;
   gradient: string;
   accentHex: string;
 }
@@ -28,7 +29,8 @@ export const BOOKS: Book[] = [
     buyUrl: 'https://elevenreader.io/audiobooks/the-human-in-the-loop-ai-rewiewer/qVyr7CdQ5tLiqGgBnkIh',
     platformLabel: 'ElevenReader',
     youtubeId: 'AP30SX4fi1M',
-    coverImageUrl: '',
+    ebookEmbedUrl: 'https://elevenreader.io/audiobooks/the-human-in-the-loop-ai-rewiewer/qVyr7CdQ5tLiqGgBnkIh',
+    secondVideoEmbedUrl: 'https://www.youtube.com/embed/8Uoe3sOPRKo?si=eyrgzgfwYpEpDXgs',
     gradient: 'linear-gradient(135deg, #0A1628 0%, #1E3A5F 50%, #2D5A8E 100%)',
     accentHex: '#4A9EDB',
   },
@@ -42,9 +44,9 @@ export const BOOKS: Book[] = [
     pages: 156,
     price: '$9.99',
     buyUrl: '#',
-    platformLabel: 'ElevenReader',
     youtubeId: '8Uoe3sOPRKo',
-    coverImageUrl: '',
+    ebookEmbedUrl: '',
+    secondVideoEmbedUrl: '',
     gradient: 'linear-gradient(135deg, #2C1810 0%, #8B5E3C 50%, #C8A96E 100%)',
     accentHex: '#C8A96E',
   },
@@ -60,7 +62,8 @@ export const BOOKS: Book[] = [
     buyUrl: '#',
     platformLabel: 'ElevenReader',
     youtubeId: '',
-    coverImageUrl: '',
+    ebookEmbedUrl: '',
+    secondVideoEmbedUrl: '',
     gradient: 'linear-gradient(135deg, #1A0A2E 0%, #4B1A7A 50%, #7B2FBE 100%)',
     accentHex: '#9B59B6',
   },
@@ -76,7 +79,8 @@ export const BOOKS: Book[] = [
     buyUrl: '#',
     platformLabel: 'ElevenReader',
     youtubeId: '',
-    coverImageUrl: '',
+    ebookEmbedUrl: '',
+    secondVideoEmbedUrl: '',
     gradient: 'linear-gradient(135deg, #1A0808 0%, #6B1A1A 50%, #C0392B 100%)',
     accentHex: '#E74C3C',
   },
@@ -92,7 +96,8 @@ export const BOOKS: Book[] = [
     buyUrl: '#',
     platformLabel: 'ElevenReader',
     youtubeId: '',
-    coverImageUrl: '',
+    ebookEmbedUrl: '',
+    secondVideoEmbedUrl: '',
     gradient: 'linear-gradient(135deg, #0A1A0A 0%, #1A4A1A 50%, #27AE60 100%)',
     accentHex: '#27AE60',
   },
@@ -108,7 +113,8 @@ export const BOOKS: Book[] = [
     buyUrl: '#',
     platformLabel: 'ElevenReader',
     youtubeId: '',
-    coverImageUrl: '',
+    ebookEmbedUrl: '',
+    secondVideoEmbedUrl: '',
     gradient: 'linear-gradient(135deg, #1A1A08 0%, #4A4A1A 50%, #D4AC0D 100%)',
     accentHex: '#F1C40F',
   },
