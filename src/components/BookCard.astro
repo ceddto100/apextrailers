@@ -6,6 +6,7 @@ interface Props {
 }
 
 const { book } = Astro.props;
+const hasPlatformLink = Boolean(book.buyUrl && book.buyUrl !== '#');
 ---
 
 <div
@@ -18,9 +19,18 @@ const { book } = Astro.props;
     class="w-full flex items-center justify-center p-6"
     style={`background: ${book.gradient}; aspect-ratio: 3/2;`}
   >
-    <span class="font-display text-2xl md:text-3xl text-center text-white/90 leading-tight px-4">
-      {book.title}
-    </span>
+    {book.coverImageUrl ? (
+      <img
+        src={book.coverImageUrl}
+        alt={`${book.title} cover`}
+        loading="lazy"
+        class="w-full h-full object-cover"
+      />
+    ) : (
+      <span class="font-display text-2xl md:text-3xl text-center text-white/90 leading-tight px-4">
+        {book.title}
+      </span>
+    )}
   </div>
 
   <!-- Info -->
@@ -44,15 +54,19 @@ const { book } = Astro.props;
       <span class="font-mono text-xs text-text-3">No DRM</span>
     </div>
 
-    <a
-      href={book.buyUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="inline-flex items-center justify-center gap-2 font-mono text-xs tracking-widest uppercase px-5 py-2.5 text-bg rounded-full hover:bg-white transition-colors duration-200 mt-2"
-      style={`background: ${book.accentHex};`}
-    >
-      Get Book &rarr;
-    </a>
+    {hasPlatformLink ? (
+      <a
+        href={book.buyUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center justify-center gap-2 font-mono text-xs tracking-widest uppercase px-5 py-2.5 text-bg rounded-full hover:bg-white transition-colors duration-200 mt-2"
+        style={`background: ${book.accentHex};`}
+      >
+        Open on {book.platformLabel} &rarr;
+      </a>
+    ) : (
+      <span class="font-mono text-xs text-text-3 mt-2">Platform link coming soon</span>
+    )}
   </div>
 </div>
 
