@@ -42,7 +42,7 @@ export const BOOKS: Book[] = [
     pages: 156,
     price: '$9.99',
     buyUrl: '#',
-    youtubeId: '',
+    youtubeId: '8Uoe3sOPRKo',
     ebookEmbedUrl: '',
     secondVideoEmbedUrl: '',
     gradient: 'linear-gradient(135deg, #2C1810 0%, #8B5E3C 50%, #C8A96E 100%)',
