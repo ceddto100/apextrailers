@@ -29,31 +29,15 @@ const paddedIndex = String(index + 1).padStart(2, '0');
   <!-- Video area -->
   <div class="px-4 md:px-6 py-4">
     {book.youtubeId ? (
-      <div class="flex flex-col gap-4">
-        <div class="video-wrap relative w-full rounded-xl overflow-hidden" style="aspect-ratio: 16/9;">
-          <iframe
-            src={`https://www.youtube.com/embed/${book.youtubeId}?rel=0&modestbranding=1&color=white&iv_load_policy=3`}
-            title={`${book.title} — Official Trailer`}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-            loading="lazy"
-            class="absolute inset-0 w-full h-full border-0"
-          />
-        </div>
-
-        {book.secondVideoEmbedUrl && (
-          <div class="video-wrap relative w-full rounded-xl overflow-hidden" style="aspect-ratio: 16/9;">
-            <iframe
-              src={book.secondVideoEmbedUrl}
-              title={`${book.title} — Official Trailer 2`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen
-              loading="lazy"
-              referrerpolicy="strict-origin-when-cross-origin"
-              class="absolute inset-0 w-full h-full border-0"
-            />
-          </div>
-        )}
+      <div class="video-wrap relative w-full rounded-xl overflow-hidden" style="aspect-ratio: 16/9;">
+        <iframe
+          src={`https://www.youtube.com/embed/${book.youtubeId}?rel=0&modestbranding=1&color=white&iv_load_policy=3`}
+          title={`${book.title} — Official Trailer`}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          loading="lazy"
+          class="absolute inset-0 w-full h-full border-0"
+        />
       </div>
     ) : (
       <div class="video-placeholder relative w-full rounded-xl overflow-hidden" style={`aspect-ratio: 16/9; background: var(--surface-2); border: 1px solid var(--border);`}>
