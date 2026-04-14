@@ -6,6 +6,7 @@ interface Props {
 }
 
 const { book } = Astro.props;
+const hasPlatformLink = Boolean(book.buyUrl && book.buyUrl !== '#');
 ---
 
 <!-- Trigger button -->
@@ -31,9 +32,18 @@ const { book } = Astro.props;
         class="book-cover flex-shrink-0 w-24 rounded-lg overflow-hidden flex items-center justify-center"
         style={`background: ${book.gradient}; aspect-ratio: 2/3;`}
       >
-        <span class="font-display text-sm text-center px-2 leading-tight text-white/90">
-          {book.title}
-        </span>
+        {book.coverImageUrl ? (
+          <img
+            src={book.coverImageUrl}
+            alt={`${book.title} cover`}
+            loading="lazy"
+            class="w-full h-full object-cover"
+          />
+        ) : (
+          <span class="font-display text-sm text-center px-2 leading-tight text-white/90">
+            {book.title}
+          </span>
+        )}
       </div>
 
       <!-- Book details -->
@@ -86,15 +96,19 @@ const { book } = Astro.props;
 
         <!-- CTA row -->
         <div class="flex flex-wrap items-center gap-4 pt-2">
-          <a
-            href={book.buyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase px-6 py-3 text-bg rounded-full hover:bg-white transition-colors duration-200"
-            style={`background: ${book.accentHex};`}
-          >
-            Get This Book &mdash; {book.price} &rarr;
-          </a>
+          {hasPlatformLink ? (
+            <a
+              href={book.buyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase px-6 py-3 text-bg rounded-full hover:bg-white transition-colors duration-200"
+              style={`background: ${book.accentHex};`}
+            >
+              Open on {book.platformLabel} &rarr;
+            </a>
+          ) : (
+            <span class="font-mono text-xs text-text-3">Platform link coming soon</span>
+          )}
           <button
             class="panel-close font-mono text-xs text-text-3 hover:text-text transition-colors"
             data-panel-id={`panel-${book.id}`}

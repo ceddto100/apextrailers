@@ -8,6 +8,7 @@ export interface Book {
   pages: number;
   price: string;
   buyUrl: string;
+  platformLabel: string;
   youtubeId: string;
   ebookEmbedUrl: string;
   secondVideoEmbedUrl: string;
@@ -25,7 +26,8 @@ export const BOOKS: Book[] = [
     description: 'A deep dive into the emerging careers, tools, and strategies defining the AI-powered economy. Written for builders who refuse to be left behind. Covers prompt engineering careers, AI product management, automation consulting, and the new class of hybrid roles only possible with LLMs.',
     pages: 180,
     price: '$12.99',
-    buyUrl: '#',
+    buyUrl: 'https://elevenreader.io/audiobooks/the-human-in-the-loop-ai-rewiewer/qVyr7CdQ5tLiqGgBnkIh',
+    platformLabel: 'ElevenReader',
     youtubeId: 'AP30SX4fi1M',
     ebookEmbedUrl: 'https://elevenreader.io/audiobooks/the-human-in-the-loop-ai-rewiewer/qVyr7CdQ5tLiqGgBnkIh',
     secondVideoEmbedUrl: 'https://www.youtube.com/embed/8Uoe3sOPRKo?si=eyrgzgfwYpEpDXgs',
@@ -58,6 +60,7 @@ export const BOOKS: Book[] = [
     pages: 204,
     price: '$8.99',
     buyUrl: '#',
+    platformLabel: 'ElevenReader',
     youtubeId: '',
     ebookEmbedUrl: '',
     secondVideoEmbedUrl: '',
@@ -74,6 +77,7 @@ export const BOOKS: Book[] = [
     pages: 168,
     price: '$7.99',
     buyUrl: '#',
+    platformLabel: 'ElevenReader',
     youtubeId: '',
     ebookEmbedUrl: '',
     secondVideoEmbedUrl: '',
@@ -90,6 +94,7 @@ export const BOOKS: Book[] = [
     pages: 120,
     price: '$6.99',
     buyUrl: '#',
+    platformLabel: 'ElevenReader',
     youtubeId: '',
     ebookEmbedUrl: '',
     secondVideoEmbedUrl: '',
@@ -106,6 +111,7 @@ export const BOOKS: Book[] = [
     pages: 192,
     price: '$9.99',
     buyUrl: '#',
+    platformLabel: 'ElevenReader',
     youtubeId: '',
     ebookEmbedUrl: '',
     secondVideoEmbedUrl: '',
