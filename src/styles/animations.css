@@ -184,8 +184,8 @@
   transform: translateY(-6px);
 }
 
-/* Trailer card */
-.trailer-card {
+/* Video card */
+.video-card {
   will-change: opacity, transform;
 }
 

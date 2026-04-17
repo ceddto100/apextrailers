@@ -6,7 +6,7 @@ interface Props {
 }
 
 const { book } = Astro.props;
-const hasPlatformLink = Boolean(book.buyUrl && book.buyUrl !== '#');
+const hasCTA = Boolean(book.buyUrl && book.buyUrl !== '#');
 ---
 
 <div
@@ -16,7 +16,7 @@ const hasPlatformLink = Boolean(book.buyUrl && book.buyUrl !== '#');
 >
   <!-- Cover art -->
   <div
-    class="w-full flex items-center justify-center p-6"
+    class="w-full flex items-center justify-center overflow-hidden"
     style={`background: ${book.gradient}; aspect-ratio: 3/2;`}
   >
     {book.coverImageUrl ? (
@@ -54,27 +54,31 @@ const hasPlatformLink = Boolean(book.buyUrl && book.buyUrl !== '#');
       <span class="font-mono text-xs text-text-3">No DRM</span>
     </div>
 
-    {hasPlatformLink ? (
+    {hasCTA ? (
       <a
         href={book.buyUrl}
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center justify-center gap-2 font-mono text-xs tracking-widest uppercase px-5 py-2.5 text-bg rounded-full hover:bg-white transition-colors duration-200 mt-2"
+        class="inline-flex items-center justify-center gap-2 font-mono text-xs tracking-widest uppercase px-5 py-2.5 text-bg rounded-full hover:brightness-110 transition-all duration-200 mt-2"
         style={`background: ${book.accentHex};`}
       >
-        Open on {book.platformLabel} &rarr;
+        {book.ctaLabel} &rarr;
       </a>
     ) : (
-      <span class="font-mono text-xs text-text-3 mt-2">Platform link coming soon</span>
+      <span class="font-mono text-xs text-text-3 mt-2">Coming soon</span>
     )}
   </div>
 </div>
 
 <style>
+  .book-card {
+    transition: transform 0.3s var(--ease-out-expo), box-shadow 0.3s ease;
+  }
   .book-card:hover {
+    transform: translateY(-6px);
     box-shadow:
-      0 0 0 1px var(--card-accent),
-      0 20px 60px color-mix(in srgb, var(--card-accent) 12%, transparent),
-      0 8px 24px rgba(0, 0, 0, 0.4);
+      0 0 0 1px color-mix(in srgb, var(--card-accent) 30%, transparent),
+      0 20px 60px rgba(0, 0, 0, 0.4),
+      0 8px 24px rgba(0, 0, 0, 0.3);
   }
 </style>

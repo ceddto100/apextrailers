@@ -25,97 +25,45 @@ const hasPlatformLink = Boolean(book.buyUrl && book.buyUrl !== '#');
   style="height: 0; opacity: 0;"
   aria-hidden="true"
 >
-  <div class="glass rounded-2xl p-4 md:p-6 mt-2 border-l-2" style={`border-left-color: ${book.accentHex};`}>
-    <div class="flex flex-col md:flex-row gap-6">
-      <!-- Cover art -->
-      <div
-        class="book-cover flex-shrink-0 w-24 rounded-lg overflow-hidden flex items-center justify-center"
-        style={`background: ${book.gradient}; aspect-ratio: 2/3;`}
-      >
-        {book.coverImageUrl ? (
-          <img
-            src={book.coverImageUrl}
-            alt={`${book.title} cover`}
-            loading="lazy"
-            class="w-full h-full object-cover"
-          />
-        ) : (
-          <span class="font-display text-sm text-center px-2 leading-tight text-white/90">
-            {book.title}
-          </span>
-        )}
-      </div>
-
+  <div class="glass rounded-2xl p-4 md:p-5 mt-2 border-l-2" style={`border-left-color: ${book.accentHex};`}>
+    <div class="flex flex-col gap-4">
       <!-- Book details -->
-      <div class="flex flex-col gap-3 flex-1 min-w-0">
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <p class="font-mono text-xs tracking-widest uppercase mb-1" style={`color: ${book.accentHex};`}>{book.genre}</p>
-            <h3 class="font-display text-2xl tracking-wide">{book.title}</h3>
-          </div>
-          <span class="font-mono text-xl flex-shrink-0" style={`color: ${book.accentHex};`}>{book.price}</span>
-        </div>
-
+      <div class="flex flex-col gap-2">
+        <p class="font-mono text-[10px] tracking-widest uppercase" style={`color: ${book.accentHex};`}>{book.genre}</p>
+        <h3 class="font-display text-xl tracking-wide">{book.title}</h3>
         <p class="text-sm text-text-2 leading-relaxed italic">{book.tagline}</p>
         <p class="text-sm text-text-2 leading-relaxed">{book.description}</p>
+      </div>
 
-        {book.ebookEmbedUrl && (
-          <div class="rounded-xl overflow-hidden border border-border bg-surface">
-            <iframe
-              src={book.ebookEmbedUrl}
-              title={`${book.title} — Audiobook Preview`}
-              loading="lazy"
-              referrerpolicy="strict-origin-when-cross-origin"
-              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-              class="w-full border-0"
-              style="height: 420px;"
-            />
-          </div>
-        )}
+      <!-- Meta row -->
+      <div class="flex flex-wrap gap-4 pt-2 border-t border-border font-mono text-xs text-text-3">
+        <span>Pages: <span class="text-text">{book.pages}</span></span>
+        <span>Format: <span class="text-text">Digital</span></span>
+        <span>DRM: <span class="text-text">None</span></span>
+        <span>Price: <span class="text-text" style={`color: ${book.accentHex};`}>{book.price}</span></span>
+      </div>
 
-        {book.secondVideoEmbedUrl && (
-          <div class="rounded-xl overflow-hidden border border-border bg-surface" style="aspect-ratio: 16 / 9;">
-            <iframe
-              src={book.secondVideoEmbedUrl}
-              title={`${book.title} — Video 2`}
-              loading="lazy"
-              referrerpolicy="strict-origin-when-cross-origin"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              class="w-full h-full border-0"
-              allowfullscreen
-            />
-          </div>
-        )}
-
-        <!-- Meta row -->
-        <div class="flex flex-wrap gap-4 md:gap-6 pt-2 border-t border-border font-mono text-xs text-text-3">
-          <span>Pages: <span class="text-text">{book.pages}</span></span>
-          <span>Format: <span class="text-text">Digital</span></span>
-          <span>DRM: <span class="text-text">None</span></span>
-        </div>
-
-        <!-- CTA row -->
-        <div class="flex flex-wrap items-center gap-4 pt-2">
-          {hasPlatformLink ? (
-            <a
-              href={book.buyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase px-6 py-3 text-bg rounded-full hover:bg-white transition-colors duration-200"
-              style={`background: ${book.accentHex};`}
-            >
-              Open on {book.platformLabel} &rarr;
-            </a>
-          ) : (
-            <span class="font-mono text-xs text-text-3">Platform link coming soon</span>
-          )}
-          <button
-            class="panel-close font-mono text-xs text-text-3 hover:text-text transition-colors"
-            data-panel-id={`panel-${book.id}`}
+      <!-- CTA row -->
+      <div class="flex flex-wrap items-center gap-4">
+        {hasPlatformLink ? (
+          <a
+            href={book.buyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase px-5 py-2.5 text-bg rounded-full hover:brightness-110 transition-all duration-200"
+            style={`background: ${book.accentHex};`}
           >
-            &#10005; Close
-          </button>
-        </div>
+            {book.ctaLabel} &rarr;
+          </a>
+        ) : (
+          <span class="font-mono text-xs text-text-3">Platform link coming soon</span>
+        )}
+        <button
+          class="panel-close font-mono text-xs text-text-3 hover:text-text transition-colors"
+          data-panel-id={`panel-${book.id}`}
+        >
+          &#10005; Close
+        </button>
       </div>
     </div>
   </div>
