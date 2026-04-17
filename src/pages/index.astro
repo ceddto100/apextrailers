@@ -7,6 +7,8 @@ import BookCard from '../components/BookCard.astro';
 import FilterBar from '../components/FilterBar.astro';
 import Footer from '../components/Footer.astro';
 import { BOOKS } from '../data/books';
+
+const featuredBooks = BOOKS.slice(0, 3);
 ---
 
 <Base>
@@ -15,23 +17,91 @@ import { BOOKS } from '../data/books';
   <!-- PAGE: Home -->
   <div id="page-home" class="page active">
     <Hero />
-  </div>
 
-  <!-- PAGE: Trailers -->
-  <div id="page-trailers" class="page">
-    <section class="pt-28 pb-16 px-6 md:px-12">
-      <div class="max-w-4xl mx-auto">
-        <!-- Section header -->
-        <div class="mb-12 gsap-fade-up">
-          <span class="font-mono text-xs tracking-widest uppercase text-accent mb-2 block">Cinematics</span>
-          <h2 class="font-display text-[clamp(36px,6vw,64px)] tracking-wide leading-[0.95] mb-4">TRAILERS</h2>
-          <p class="text-text-2 max-w-lg">Watch cinematic previews for each title. Click "About This Book" to expand details and purchase.</p>
+    <!-- Featured Clips section -->
+    <section class="py-20 px-6 md:px-12 border-t border-border">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex items-end justify-between mb-10 gsap-fade-up">
+          <div>
+            <span class="font-mono text-xs tracking-widest uppercase text-accent mb-2 block">Latest Drops</span>
+            <h2 class="font-display text-[clamp(32px,5vw,56px)] tracking-wide leading-[0.95]">FEATURED CLIPS</h2>
+          </div>
+          <button
+            class="font-mono text-xs tracking-widest uppercase text-text-3 hover:text-accent transition-colors duration-200 flex items-center gap-2"
+            data-tab-target="clips"
+          >
+            View All &rarr;
+          </button>
         </div>
 
-        <!-- Trailer cards -->
-        {BOOKS.map((book, i) => (
-          <TrailerCard book={book} index={i} />
-        ))}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {featuredBooks.map((book, i) => (
+            <TrailerCard book={book} index={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Books section -->
+    <section class="py-20 px-6 md:px-12 border-t border-border">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex items-end justify-between mb-10 gsap-fade-up">
+          <div>
+            <span class="font-mono text-xs tracking-widest uppercase text-accent mb-2 block">The Collection</span>
+            <h2 class="font-display text-[clamp(32px,5vw,56px)] tracking-wide leading-[0.95]">FEATURED BOOKS</h2>
+          </div>
+          <button
+            class="font-mono text-xs tracking-widest uppercase text-text-3 hover:text-accent transition-colors duration-200 flex items-center gap-2"
+            data-tab-target="books"
+          >
+            Browse All &rarr;
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {featuredBooks.map((book) => (
+            <BookCard book={book} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Brand statement section -->
+    <section class="py-24 px-6 md:px-12 border-t border-border">
+      <div class="max-w-4xl mx-auto text-center">
+        <p class="font-display text-[clamp(28px,4vw,52px)] tracking-wide leading-[1.05] text-text/80 gsap-fade-up">
+          SHORT-FORM CONTENT.<br/>
+          <span class="text-accent">LONG-LASTING IMPACT.</span>
+        </p>
+        <p class="font-mono text-xs tracking-widest uppercase text-text-3 mt-6 gsap-fade-up">
+          Thoughts Evoked Media &mdash; Where books meet short-form culture
+        </p>
+      </div>
+    </section>
+
+    <Footer />
+  </div>
+
+  <!-- PAGE: Clips -->
+  <div id="page-clips" class="page">
+    <section class="pt-28 pb-16 px-6 md:px-12">
+      <div class="max-w-6xl mx-auto">
+        <!-- Section header -->
+        <div class="mb-10 gsap-fade-up">
+          <span class="font-mono text-xs tracking-widest uppercase text-accent mb-2 block">Short-Form</span>
+          <h2 class="font-display text-[clamp(36px,6vw,64px)] tracking-wide leading-[0.95] mb-4">ALL CLIPS</h2>
+          <p class="text-text-2 max-w-lg">9:16 vertical promos for every book in the collection. Watch, then click to read.</p>
+        </div>
+
+        <!-- Filter bar (reuses genre filter) -->
+        <FilterBar />
+
+        <!-- Clips grid — 9:16 vertical cards -->
+        <div class="clips-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {BOOKS.map((book, i) => (
+            <TrailerCard book={book} index={i} />
+          ))}
+        </div>
       </div>
     </section>
     <Footer />
@@ -70,26 +140,6 @@ import { BOOKS } from '../data/books';
   gsap.registerPlugin(ScrollTrigger);
 
   function initPageAnimations() {
-    // ScrollTrigger reveals for trailer cards
-    gsap.utils.toArray('.trailer-card').forEach((card: any, i: number) => {
-      gsap.fromTo(card,
-        { opacity: 0, y: 48 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 88%',
-            once: true,
-          },
-          delay: i * 0.05,
-        }
-      );
-    });
-
-    // ScrollTrigger reveals for gsap-fade-up elements
     gsap.utils.toArray('.gsap-fade-up').forEach((el: any) => {
       gsap.fromTo(el,
         { opacity: 0, y: 32 },
@@ -107,7 +157,24 @@ import { BOOKS } from '../data/books';
       );
     });
 
-    // Book card stagger reveal
+    gsap.utils.toArray('.video-card').forEach((card: any, i: number) => {
+      gsap.fromTo(card,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 90%',
+            once: true,
+          },
+          delay: (i % 3) * 0.08,
+        }
+      );
+    });
+
     gsap.utils.toArray('.book-card').forEach((card: any, i: number) => {
       gsap.fromTo(card,
         { opacity: 0, y: 32 },
@@ -121,9 +188,32 @@ import { BOOKS } from '../data/books';
             start: 'top 90%',
             once: true,
           },
-          delay: i * 0.06,
+          delay: (i % 3) * 0.06,
         }
       );
+    });
+  }
+
+  // Hover-to-play for Cloudinary videos
+  function initVideoHover() {
+    document.querySelectorAll('.video-card').forEach(card => {
+      const video = card.querySelector<HTMLVideoElement>('.video-player');
+      const playIcon = card.querySelector('.play-icon');
+      const pauseIcon = card.querySelector('.pause-icon');
+      if (!video) return;
+
+      card.addEventListener('mouseenter', () => {
+        video.play().catch(() => {});
+        playIcon?.classList.add('hidden');
+        pauseIcon?.classList.remove('hidden');
+      });
+
+      card.addEventListener('mouseleave', () => {
+        video.pause();
+        video.currentTime = 0;
+        playIcon?.classList.remove('hidden');
+        pauseIcon?.classList.add('hidden');
+      });
     });
   }
 
@@ -196,15 +286,15 @@ import { BOOKS } from '../data/books';
     });
   }
 
-  // Genre filter logic
+  // Genre filter — scoped to the page the filter button lives in
   function initFilter() {
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const cards = document.querySelectorAll('.book-card');
-
-    filterBtns.forEach(btn => {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        // Update active button
-        filterBtns.forEach(b => {
+        const page = btn.closest('.page');
+        if (!page) return;
+
+        // Reset all filter buttons within this page
+        page.querySelectorAll('.filter-btn').forEach(b => {
           b.classList.remove('active', 'bg-accent', 'text-bg', 'border-accent');
           b.classList.add('text-text-2', 'border-border');
         });
@@ -212,13 +302,13 @@ import { BOOKS } from '../data/books';
         btn.classList.remove('text-text-2', 'border-border');
 
         const genre = btn.getAttribute('data-genre');
+        const cards = [...page.querySelectorAll('.video-card, .book-card')];
 
         const filtered = genre === 'all'
-          ? [...cards]
-          : [...cards].filter(c => c.getAttribute('data-genre') === genre);
-        const hidden = [...cards].filter(c => !filtered.includes(c));
+          ? cards
+          : cards.filter(c => c.getAttribute('data-genre') === genre);
+        const hidden = cards.filter(c => !filtered.includes(c));
 
-        // Hide non-matching
         gsap.to(hidden, {
           opacity: 0,
           scale: 0.95,
@@ -227,7 +317,6 @@ import { BOOKS } from '../data/books';
           onComplete: () => hidden.forEach((c: any) => c.style.display = 'none'),
         });
 
-        // Show matching with stagger
         filtered.forEach((c: any) => c.style.display = 'flex');
         gsap.fromTo(filtered,
           { opacity: 0, y: 16 },
@@ -237,9 +326,24 @@ import { BOOKS } from '../data/books';
     });
   }
 
+  // Home page "View All" / "Browse All" buttons route to correct tab
+  function initHomeCTAs() {
+    document.querySelectorAll('[data-tab-target]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabId = btn.getAttribute('data-tab-target');
+        if (tabId) {
+          const tabBtn = document.querySelector(`[data-tab="${tabId}"]`) as HTMLButtonElement;
+          tabBtn?.click();
+        }
+      });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     initPageAnimations();
+    initVideoHover();
     initPanels();
     initFilter();
+    initHomeCTAs();
   });
 </script>

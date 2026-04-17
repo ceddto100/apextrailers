@@ -1,12 +1,12 @@
 ---
-const tabs = ['Home', 'Trailers', 'Books'];
+const tabs = ['Home', 'Clips', 'Books'];
 ---
 
 <nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
   <div class="nav-inner flex items-center justify-between px-6 md:px-12 py-5">
     <a href="/" class="nav-logo flex items-baseline gap-2" data-tab-link="home">
-      <span class="font-display text-3xl tracking-widest text-accent">APEX</span>
-      <span class="font-mono text-xs text-text-3 tracking-widest">/TRAILERS</span>
+      <span class="font-display text-2xl tracking-widest text-accent">THOUGHTS EVOKED</span>
+      <span class="font-mono text-[10px] text-text-3 tracking-widest">/MEDIA</span>
     </a>
 
     <div class="tab-group flex gap-1">
@@ -30,7 +30,6 @@ const tabs = ['Home', 'Trailers', 'Books'];
     const nav = document.getElementById('main-nav');
     if (!nav) return;
 
-    // Scroll behavior: transparent → frosted glass
     window.addEventListener('scroll', () => {
       if (window.scrollY > 60) {
         nav.style.background = 'rgba(7, 7, 7, 0.92)';
@@ -43,7 +42,6 @@ const tabs = ['Home', 'Trailers', 'Books'];
       }
     }, { passive: true });
 
-    // Tab switching
     function switchTab(tabId: string) {
       const gsap = (window as any).__gsap;
       if (!gsap) return;
@@ -51,13 +49,11 @@ const tabs = ['Home', 'Trailers', 'Books'];
       const currentPage = document.querySelector('.page.active');
       const nextPage = document.getElementById(`page-${tabId}`);
 
-      // Update active tab button
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelector(`[data-tab="${tabId}"]`)?.classList.add('active');
 
       if (!nextPage || currentPage === nextPage) return;
 
-      // Animate out current page
       gsap.to(currentPage, {
         opacity: 0,
         y: -12,
@@ -66,20 +62,16 @@ const tabs = ['Home', 'Trailers', 'Books'];
         onComplete: () => {
           currentPage?.classList.remove('active');
           nextPage.classList.add('active');
-          // Animate in new page
           gsap.fromTo(nextPage,
             { opacity: 0, y: 16 },
             { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }
           );
-          // Scroll to top
           (window as any).__lenis?.scrollTo(0, { immediate: true });
-          // Refresh ScrollTrigger for new content
           (window as any).__ScrollTrigger?.refresh();
         }
       });
     }
 
-    // Wire up tab buttons
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const tabId = btn.getAttribute('data-tab');
@@ -87,7 +79,6 @@ const tabs = ['Home', 'Trailers', 'Books'];
       });
     });
 
-    // Wire up logo click
     const logo = document.querySelector('.nav-logo');
     if (logo) {
       logo.addEventListener('click', (e) => {

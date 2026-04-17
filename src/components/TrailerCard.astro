@@ -8,56 +8,110 @@ interface Props {
 }
 
 const { book, index } = Astro.props;
-const paddedIndex = String(index + 1).padStart(2, '0');
+const hasVideo = Boolean(book.cloudinaryUrl);
+const hasCTA = Boolean(book.buyUrl && book.buyUrl !== '#');
 ---
 
-<article class="trailer-card border border-border rounded-2xl overflow-hidden bg-surface mb-8">
-  <!-- Header -->
-  <div class="flex items-center justify-between px-4 md:px-6 py-4 border-b border-border">
-    <div class="flex items-center gap-3">
-      <span class="font-mono text-xs text-text-3">[{paddedIndex}]</span>
-      <h2 class="font-display text-xl md:text-2xl tracking-wide">{book.title}</h2>
-    </div>
-    <span
-      class="font-mono text-[10px] tracking-widest uppercase px-3 py-1 rounded-full border"
-      style={`color: ${book.accentHex}; border-color: ${book.accentHex}30;`}
-    >
-      {book.genre}
-    </span>
-  </div>
+<article
+  class="video-card group relative rounded-2xl overflow-hidden border border-border bg-surface flex flex-col cursor-pointer"
+  data-genre={book.genre}
+  style={`--card-accent: ${book.accentHex};`}
+>
+  <!-- Video area — 9:16 portrait ratio -->
+  <div class="relative overflow-hidden flex-shrink-0" style="aspect-ratio: 9/16;">
 
-  <!-- Video area -->
-  <div class="px-4 md:px-6 py-4">
-    {book.youtubeId ? (
-      <div class="video-wrap relative w-full rounded-xl overflow-hidden" style="aspect-ratio: 16/9;">
-        <iframe
-          src={`https://www.youtube.com/embed/${book.youtubeId}?rel=0&modestbranding=1&color=white&iv_load_policy=3`}
-          title={`${book.title} — Official Trailer`}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          loading="lazy"
-          class="absolute inset-0 w-full h-full border-0"
-        />
-      </div>
+    {hasVideo ? (
+      <video
+        class="video-player absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+        src={book.cloudinaryUrl}
+        poster={book.thumbnailUrl || undefined}
+        muted
+        loop
+        playsinline
+        preload="none"
+      />
     ) : (
-      <div class="video-placeholder relative w-full rounded-xl overflow-hidden" style={`aspect-ratio: 16/9; background: var(--surface-2); border: 1px solid var(--border);`}>
-        <div class="absolute inset-0 flex flex-col items-center justify-center gap-4">
-          <div class="play-ring w-16 h-16 rounded-full border border-border-2 flex items-center justify-center">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-text-3 ml-1">
-              <path d="M8 5v14l11-7z"/>
-            </svg>
-          </div>
-          <p class="font-mono text-xs tracking-widest text-text-3 uppercase">Trailer Coming Soon</p>
+      <!-- Gradient placeholder -->
+      <div
+        class="absolute inset-0 flex flex-col items-center justify-center gap-3"
+        style={`background: ${book.gradient};`}
+      >
+        <div class="play-ring relative w-16 h-16 rounded-full border border-white/20 flex items-center justify-center">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="text-white/50 ml-1">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <div class="pulse-ring absolute inset-0 rounded-full border pointer-events-none" style={`border-color: ${book.accentHex}; opacity: 0.3;`}></div>
         </div>
-        <div class="pulse-ring absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
-          <div class="w-16 h-16 rounded-full border" style={`border-color: ${book.accentHex}; opacity: 0.2;`}></div>
+        <p class="font-mono text-[10px] tracking-widest text-white/40 uppercase">Clip Coming Soon</p>
+      </div>
+    )}
+
+    <!-- Hover play/pause overlay (only for real videos) -->
+    {hasVideo && (
+      <div class="play-overlay absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/25 pointer-events-none">
+        <div class="w-14 h-14 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center">
+          <svg class="play-icon" width="20" height="20" viewBox="0 0 24 24" fill="white">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <svg class="pause-icon hidden" width="20" height="20" viewBox="0 0 24 24" fill="white">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+          </svg>
         </div>
       </div>
     )}
+
+    <!-- Genre chip (top-left) -->
+    <div class="absolute top-3 left-3 z-10">
+      <span
+        class="font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full backdrop-blur-sm"
+        style={`background: ${book.accentHex}22; color: ${book.accentHex}; border: 1px solid ${book.accentHex}44;`}
+      >
+        {book.genre}
+      </span>
+    </div>
+
+    <!-- Bottom gradient + quick-info overlay on hover -->
+    <div class="video-overlay absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
   </div>
 
-  <!-- Book panel toggle + panel -->
-  <div class="px-4 md:px-6 pb-4">
+  <!-- Card info below video -->
+  <div class="p-4 flex flex-col gap-2 flex-1 border-t border-border">
+    <h2 class="font-display text-lg md:text-xl tracking-wide leading-tight">{book.title}</h2>
+    <p class="text-xs text-text-2 leading-relaxed line-clamp-2">{book.tagline}</p>
+
+    <div class="flex items-center justify-between mt-auto pt-3">
+      {hasCTA ? (
+        <a
+          href={book.buyUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase px-4 py-2 rounded-full text-bg transition-all duration-200 hover:brightness-110 hover:shadow-lg"
+          style={`background: ${book.accentHex};`}
+          onclick="event.stopPropagation()"
+        >
+          {book.ctaLabel} &rarr;
+        </a>
+      ) : (
+        <span class="font-mono text-xs text-text-3">Coming soon</span>
+      )}
+      <span class="font-mono text-xs text-text-3">{book.price}</span>
+    </div>
+
+    <!-- Expandable book panel -->
     <BookPanel book={book} />
   </div>
 </article>
+
+<style>
+  .video-card {
+    transition: transform 0.3s var(--ease-out-expo), box-shadow 0.35s ease;
+    will-change: transform;
+  }
+  .video-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--card-accent) 30%, transparent),
+      0 24px 60px rgba(0, 0, 0, 0.5),
+      0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+</style>
