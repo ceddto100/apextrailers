@@ -5,16 +5,24 @@ import BookPanel from './BookPanel.astro';
 interface Props {
   book: Book;
   index: number;
+  panelIdPrefix?: string;
 }
 
-const { book, index } = Astro.props;
+const { book, index, panelIdPrefix = 'trailer' } = Astro.props;
 const hasVideo = Boolean(book.cloudinaryUrl);
 const hasCTA = Boolean(book.buyUrl && book.buyUrl !== '#');
+const panelId = `${panelIdPrefix}-${book.id}-${index}`;
 ---
 
 <article
   class="video-card group relative rounded-2xl overflow-hidden border border-border bg-surface flex flex-col cursor-pointer"
   data-genre={book.genre}
+  data-title={book.title}
+  data-tagline={book.tagline}
+  data-description={book.description}
+  data-cover-url={book.coverImageUrl || ""}
+  data-buy-url={book.buyUrl || ""}
+  data-cta-label={book.ctaLabel || "Learn More"}
   style={`--card-accent: ${book.accentHex};`}
 >
   <!-- Video area — 9:16 portrait ratio -->
@@ -98,7 +106,7 @@ const hasCTA = Boolean(book.buyUrl && book.buyUrl !== '#');
     </div>
 
     <!-- Expandable book panel -->
-    <BookPanel book={book} />
+    <BookPanel book={book} panelId={panelId} />
   </div>
 </article>
 
@@ -113,5 +121,13 @@ const hasCTA = Boolean(book.buyUrl && book.buyUrl !== '#');
       0 0 0 1px color-mix(in srgb, var(--card-accent) 30%, transparent),
       0 24px 60px rgba(0, 0, 0, 0.5),
       0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .video-card-focus-active {
+    z-index: 80;
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--card-accent) 35%, transparent),
+      0 30px 90px rgba(0, 0, 0, 0.65),
+      0 12px 36px rgba(0, 0, 0, 0.4);
   }
 </style>

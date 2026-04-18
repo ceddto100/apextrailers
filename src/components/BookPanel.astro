@@ -3,16 +3,17 @@ import type { Book } from '../data/books';
 
 interface Props {
   book: Book;
+  panelId: string;
 }
 
-const { book } = Astro.props;
+const { book, panelId } = Astro.props;
 const hasPlatformLink = Boolean(book.buyUrl && book.buyUrl !== '#');
 ---
 
 <!-- Trigger button -->
 <button
   class="panel-toggle font-mono text-xs tracking-widest uppercase text-text-2 flex items-center gap-2 py-3 hover:text-accent transition-colors duration-200"
-  data-panel-id={`panel-${book.id}`}
+  data-panel-id={panelId}
 >
   <span class="toggle-icon transition-transform duration-300 inline-block">&#9660;</span>
   <span class="toggle-label">About This Book</span>
@@ -20,7 +21,7 @@ const hasPlatformLink = Boolean(book.buyUrl && book.buyUrl !== '#');
 
 <!-- Expandable panel -->
 <div
-  id={`panel-${book.id}`}
+  id={panelId}
   class="book-panel overflow-hidden"
   style="height: 0; opacity: 0;"
   aria-hidden="true"
@@ -60,7 +61,7 @@ const hasPlatformLink = Boolean(book.buyUrl && book.buyUrl !== '#');
         )}
         <button
           class="panel-close font-mono text-xs text-text-3 hover:text-text transition-colors"
-          data-panel-id={`panel-${book.id}`}
+          data-panel-id={panelId}
         >
           &#10005; Close
         </button>
