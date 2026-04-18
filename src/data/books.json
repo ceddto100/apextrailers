@@ -1,21 +1,21 @@
 [
-  {
-    "id": 1,
-    "slug": "ai-economy-playbook",
-    "title": "The AI Economy Playbook",
-    "genre": "Business & AI",
-    "tagline": "The roles that didn't exist 5 years ago — and how to own them.",
-    "description": "A deep dive into the emerging careers, tools, and strategies defining the AI-powered economy. Written for builders who refuse to be left behind. Covers prompt engineering careers, AI product management, automation consulting, and the new class of hybrid roles only possible with LLMs.",
-    "pages": 180,
-    "price": "$12.99",
-    "buyUrl": "https://elevenreader.io/audiobooks/the-human-in-the-loop-ai-rewiewer/qVyr7CdQ5tLiqGgBnkIh",
-    "ctaLabel": "Read on ElevenReader",
-    "cloudinaryUrl": "",
-    "thumbnailUrl": "",
-    "coverImageUrl": "/AI_reviewer.jpeg",
-    "gradient": "linear-gradient(135deg, #0A1628 0%, #1E3A5F 50%, #2D5A8E 100%)",
-    "accentHex": "#4A9EDB"
-  },
+{
+  "id": 1,
+  "slug": "engineered-collapse-black-family",
+  "title": "The Engineered Collapse of the Black Family",
+  "genre": "Social Justice & History",
+  "tagline": "Do you ever wonder why the Black family is dysfunctional?",
+  "description": "A case file, not a complaint. Through declassified government records, federal court settlements, and hard data, Cedrick Carter traces every mechanism used to systematically dismantle Black households in America — from welfare policies designed to push fathers out, to drug laws written with a racial gap built right in, to the media playbook that programmed a generation for failure. Layer by layer, the evidence stacks into one undeniable picture: what looks like a cultural problem is actually an engineered one.",
+  "pages": 35,
+  "price": "$4.99",
+  "buyUrl": "https://elevenreader.io/audiobooks/the-engineered-collapse-of-the-black-family-audiobook/al7vX372r9AxcW4lzmAM",
+  "ctaLabel": "Read Now",
+  "cloudinaryUrl": "https://res.cloudinary.com/drssz6lnm/video/upload/v1776541408/ElevenLabs_Untitled_project_kssivi.mp4",
+  "thumbnailUrl": "https://res.cloudinary.com/drssz6lnm/image/upload/v1776541501/black_family_tcrmr6.png",
+  "coverImageUrl": "https://res.cloudinary.com/drssz6lnm/image/upload/v1776541501/black_family_tcrmr6.png",
+  "gradient": "linear-gradient(135deg, #1a0000 0%, #3D0000 50%, #6B1A1A 100%)",
+  "accentHex": "#C0392B"
+},
   {
     "id": 2,
     "slug": "architect-of-tomorrow",
