@@ -25,10 +25,10 @@ const hasCTA = Boolean(book.buyUrl && book.buyUrl !== '#');
         class="video-player absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
         src={book.cloudinaryUrl}
         poster={book.thumbnailUrl || undefined}
-        muted
+        controls
         loop
         playsinline
-        preload="none"
+        preload="metadata"
       />
     ) : (
       <!-- Gradient placeholder -->
@@ -46,7 +46,7 @@ const hasCTA = Boolean(book.buyUrl && book.buyUrl !== '#');
       </div>
     )}
 
-    <!-- Hover play/pause overlay (only for real videos) -->
+    <!-- Play/pause status overlay (only for real videos) -->
     {hasVideo && (
       <div class="play-overlay absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/25 pointer-events-none">
         <div class="w-14 h-14 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center">
