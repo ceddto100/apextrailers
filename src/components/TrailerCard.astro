@@ -17,6 +17,12 @@ const panelId = `${panelIdPrefix}-${book.id}-${index}`;
 <article
   class="video-card group relative rounded-2xl overflow-hidden border border-border bg-surface flex flex-col cursor-pointer"
   data-genre={book.genre}
+  data-title={book.title}
+  data-tagline={book.tagline}
+  data-description={book.description}
+  data-cover-url={book.coverImageUrl || ""}
+  data-buy-url={book.buyUrl || ""}
+  data-cta-label={book.ctaLabel || "Learn More"}
   style={`--card-accent: ${book.accentHex};`}
 >
   <!-- Video area — 9:16 portrait ratio -->
