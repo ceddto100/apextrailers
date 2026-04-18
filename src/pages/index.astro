@@ -36,7 +36,7 @@ const featuredBooks = BOOKS.slice(0, 3);
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {featuredBooks.map((book, i) => (
-            <TrailerCard book={book} index={i} />
+            <TrailerCard book={book} index={i} panelIdPrefix="home-clips" />
           ))}
         </div>
       </div>
@@ -99,7 +99,7 @@ const featuredBooks = BOOKS.slice(0, 3);
         <!-- Clips grid — 9:16 vertical cards -->
         <div class="clips-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {BOOKS.map((book, i) => (
-            <TrailerCard book={book} index={i} />
+            <TrailerCard book={book} index={i} panelIdPrefix="clips-page" />
           ))}
         </div>
       </div>
@@ -329,6 +329,204 @@ const featuredBooks = BOOKS.slice(0, 3);
     });
   }
 
+  // Click-to-focus video card animation for cinematic playback emphasis
+  function initVideoFocus() {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'video-focus-backdrop';
+    document.body.appendChild(backdrop);
+
+    const companionPanel = document.createElement('aside');
+    companionPanel.className = 'video-focus-companion';
+    companionPanel.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(companionPanel);
+
+    let activeCard: HTMLElement | null = null;
+    let activePlaceholder: HTMLDivElement | null = null;
+
+    const escapeHtml = (value: string) => value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+    function closeFocusedCard() {
+      if (!activeCard) return;
+      const cardToClose = activeCard;
+      const placeholder = activePlaceholder;
+      activeCard = null;
+      activePlaceholder = null;
+      document.body.classList.remove('video-focus-lock');
+      backdrop.style.pointerEvents = 'none';
+
+      gsap.to(backdrop, { autoAlpha: 0, duration: 0.25, ease: 'power2.inOut' });
+      if (placeholder) {
+        const baseLeft = Number(cardToClose.dataset.focusBaseLeft || '0');
+        const baseTop = Number(cardToClose.dataset.focusBaseTop || '0');
+        const targetRect = placeholder.getBoundingClientRect();
+
+        gsap.to(cardToClose, {
+          x: targetRect.left - baseLeft,
+          y: targetRect.top - baseTop,
+          scale: 1,
+          duration: 0.45,
+          ease: 'power3.inOut',
+          onComplete: () => {
+            cardToClose.classList.remove('video-card-focus-active');
+            placeholder.replaceWith(cardToClose);
+            gsap.set(cardToClose, { clearProps: 'x,y,scale' });
+            cardToClose.style.position = '';
+            cardToClose.style.left = '';
+            cardToClose.style.top = '';
+            cardToClose.style.width = '';
+            cardToClose.style.height = '';
+            cardToClose.style.zIndex = '';
+            cardToClose.style.margin = '';
+            delete cardToClose.dataset.focusBaseLeft;
+            delete cardToClose.dataset.focusBaseTop;
+          },
+        });
+      }
+
+      gsap.to(companionPanel, {
+        autoAlpha: 0,
+        x: 20,
+        duration: 0.25,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          companionPanel.innerHTML = '';
+          companionPanel.style.pointerEvents = 'none';
+          companionPanel.setAttribute('aria-hidden', 'true');
+        },
+      });
+    }
+
+    function focusCard(card: HTMLElement) {
+      if (activeCard === card) return;
+      if (activeCard) closeFocusedCard();
+
+      const rect = card.getBoundingClientRect();
+      const placeholder = document.createElement('div');
+      placeholder.className = 'video-focus-placeholder';
+      placeholder.style.width = `${rect.width}px`;
+      placeholder.style.height = `${rect.height}px`;
+      card.after(placeholder);
+
+      card.style.position = 'fixed';
+      card.style.left = `${rect.left}px`;
+      card.style.top = `${rect.top}px`;
+      card.style.width = `${rect.width}px`;
+      card.style.height = `${rect.height}px`;
+      card.style.zIndex = '90';
+      card.style.margin = '0';
+      card.dataset.focusBaseLeft = `${rect.left}`;
+      card.dataset.focusBaseTop = `${rect.top}`;
+      document.body.appendChild(card);
+
+      const gap = 24;
+      const maxFocusHeight = window.innerHeight * 0.88;
+      const targetVideoWidth = Math.min(window.innerWidth * 0.44, 420);
+      const scaleByWidth = targetVideoWidth / rect.width;
+      const scaleByHeight = maxFocusHeight / rect.height;
+      const scale = Math.min(scaleByWidth, scaleByHeight);
+      const scaledVideoWidth = rect.width * scale;
+
+      const maxBookWidth = Math.min(window.innerWidth * 0.4, 420);
+      const availableBookWidth = window.innerWidth * 0.92 - scaledVideoWidth - gap;
+      const bookWidth = Math.min(maxBookWidth, Math.max(220, availableBookWidth));
+      const pairWidth = scaledVideoWidth + gap + bookWidth;
+
+      const cardCenterX = rect.left + rect.width / 2;
+      const cardCenterY = rect.top + rect.height / 2;
+      const viewportCenterX = window.innerWidth / 2;
+      const viewportCenterY = window.innerHeight / 2;
+      const targetVideoCenterX = viewportCenterX - (pairWidth - scaledVideoWidth) / 2;
+
+      const title = escapeHtml(card.dataset.title || 'Book');
+      const tagline = escapeHtml(card.dataset.tagline || '');
+      const description = escapeHtml(card.dataset.description || '');
+      const coverUrl = card.dataset.coverUrl || '';
+      const buyUrl = card.dataset.buyUrl || '';
+      const ctaLabel = escapeHtml(card.dataset.ctaLabel || 'View Book');
+
+      const coverHtml = coverUrl
+        ? `<img src="${coverUrl}" alt="${title} cover" class="video-focus-cover" />`
+        : `<div class="video-focus-cover video-focus-cover-placeholder">${title}</div>`;
+
+      const ctaHtml = buyUrl && buyUrl !== '#'
+        ? `<div class="video-focus-book-actions"><span class="video-focus-cta">${ctaLabel} &rarr;</span></div>`
+        : '<div class="video-focus-book-actions"><span class="video-focus-soon">Coming soon</span></div>';
+
+      const bookCardInnerHtml = `
+        ${coverHtml}
+        ${ctaHtml}
+        <div class="video-focus-book-copy">
+          <p class="video-focus-book-kicker">E-BOOK</p>
+          <h3 class="video-focus-book-title">${title}</h3>
+          <p class="video-focus-book-tagline">${tagline}</p>
+          <p class="video-focus-book-description">${description}</p>
+        </div>
+      `;
+
+      companionPanel.innerHTML = buyUrl && buyUrl !== '#'
+        ? `<a href="${buyUrl}" target="_blank" rel="noopener noreferrer" class="video-focus-book-card video-focus-book-card-link">${bookCardInnerHtml}</a>`
+        : `<div class="video-focus-book-card">${bookCardInnerHtml}</div>`;
+
+      activeCard = card;
+      activePlaceholder = placeholder;
+      card.classList.add('video-card-focus-active');
+      document.body.classList.add('video-focus-lock');
+      backdrop.style.pointerEvents = 'auto';
+
+      companionPanel.style.width = `${bookWidth}px`;
+      companionPanel.style.left = `${targetVideoCenterX + scaledVideoWidth / 2 + gap}px`;
+      companionPanel.style.top = `${viewportCenterY}px`;
+      companionPanel.style.pointerEvents = 'auto';
+      companionPanel.setAttribute('aria-hidden', 'false');
+
+      gsap.set(companionPanel, { x: 20, yPercent: -50, autoAlpha: 0 });
+      gsap.to(companionPanel, { autoAlpha: 1, x: 0, duration: 0.35, ease: 'power3.out', delay: 0.1 });
+
+      gsap.to(backdrop, { autoAlpha: 1, duration: 0.3, ease: 'power2.out' });
+      gsap.to(card, {
+        x: targetVideoCenterX - cardCenterX,
+        y: viewportCenterY - cardCenterY,
+        scale,
+        duration: 0.55,
+        ease: 'power3.out',
+      });
+    }
+
+    backdrop.addEventListener('click', closeFocusedCard);
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeFocusedCard();
+    });
+
+    window.addEventListener('resize', () => {
+      if (activeCard) closeFocusedCard();
+    });
+
+    document.querySelectorAll('.video-card').forEach((card) => {
+      if (card.dataset.focusInit === 'true') return;
+
+      const video = card.querySelector<HTMLVideoElement>('.video-player');
+      if (!video) return;
+
+      video.addEventListener('click', (event) => {
+        event.stopPropagation();
+
+        if (activeCard === card) {
+          closeFocusedCard();
+        } else {
+          focusCard(card as HTMLElement);
+        }
+      });
+
+      card.dataset.focusInit = 'true';
+    });
+  }
+
   // Home page "View All" / "Browse All" buttons route to correct tab
   function initHomeCTAs() {
     document.querySelectorAll('[data-tab-target]').forEach(btn => {
@@ -350,3 +548,126 @@ const featuredBooks = BOOKS.slice(0, 3);
     initHomeCTAs();
   });
 </script>
+
+
+<style is:global>
+  .video-focus-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 6, 10, 0.78);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    visibility: hidden;
+    z-index: 70;
+    pointer-events: none;
+  }
+
+  body.video-focus-lock {
+    overflow: hidden;
+  }
+
+  .video-focus-companion {
+    position: fixed;
+    z-index: 85;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .video-focus-book-card {
+    background: rgba(12, 13, 20, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+    display: flex;
+    flex-direction: column;
+    max-height: 88vh;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .video-focus-cover {
+    width: 100%;
+    max-height: 42vh;
+    object-fit: contain;
+    background: rgba(4, 6, 12, 0.9);
+  }
+
+  .video-focus-cover-placeholder {
+    display: grid;
+    place-items: center;
+    background: linear-gradient(140deg, #6f86ff, #ad5cf0);
+    color: #fff;
+    font-family: var(--font-display, serif);
+    font-size: 1.125rem;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .video-focus-book-copy {
+    padding: 1rem;
+    display: grid;
+    gap: 0.6rem;
+    overflow: auto;
+  }
+
+  .video-focus-book-kicker {
+    font-size: 0.625rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-accent, #8db5ff);
+    margin: 0;
+  }
+
+  .video-focus-book-title {
+    margin: 0;
+    font-size: 1.35rem;
+    line-height: 1.1;
+  }
+
+  .video-focus-book-tagline,
+  .video-focus-book-description {
+    margin: 0;
+    color: rgba(232, 236, 255, 0.82);
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+
+  .video-focus-book-actions {
+    padding: 0.75rem 1rem 0.15rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .video-focus-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 0.65rem 1rem;
+    border-radius: 9999px;
+    background: var(--color-accent, #8db5ff);
+    color: #05060a;
+    text-decoration: none;
+  }
+
+  .video-focus-book-card-link {
+    cursor: pointer;
+  }
+
+  .video-focus-book-card-link:hover .video-focus-cta {
+    filter: brightness(1.05);
+  }
+
+  .video-focus-placeholder {
+    border-radius: 1rem;
+  }
+
+  .video-focus-soon {
+    font-size: 0.75rem;
+    color: rgba(232, 236, 255, 0.72);
+  }
+</style>
