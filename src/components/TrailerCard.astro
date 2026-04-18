@@ -15,7 +15,7 @@ const panelId = `${panelIdPrefix}-${book.id}-${index}`;
 ---
 
 <article
-  class="video-card group relative w-full max-w-[300px] mx-auto rounded-2xl overflow-hidden border border-border bg-surface flex flex-col cursor-pointer"
+  class="video-card group relative rounded-2xl overflow-hidden border border-border bg-surface flex flex-col cursor-pointer"
   data-genre={book.genre}
   style={`--card-accent: ${book.accentHex};`}
 >
@@ -115,5 +115,13 @@ const panelId = `${panelIdPrefix}-${book.id}-${index}`;
       0 0 0 1px color-mix(in srgb, var(--card-accent) 30%, transparent),
       0 24px 60px rgba(0, 0, 0, 0.5),
       0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .video-card-focus-active {
+    z-index: 80;
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--card-accent) 35%, transparent),
+      0 30px 90px rgba(0, 0, 0, 0.65),
+      0 12px 36px rgba(0, 0, 0, 0.4);
   }
 </style>
