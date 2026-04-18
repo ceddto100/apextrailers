@@ -132,6 +132,11 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
     private r = 0;
     private animId = 0;
     private covers: CoverEntry[] = [];
+    private userRotation = 0;
+    private isDragging = false;
+    private lastPointerX = 0;
+    private coverHitRegions: { x: number; y: number; w: number; h: number; cover: CoverEntry }[] = [];
+    private readonly rotationSpeed = 0.00022;
 
     constructor(canvas: HTMLCanvasElement) {
       this.canvas = canvas;
@@ -140,6 +145,64 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
       this.resize();
       window.addEventListener('resize', () => this.resize());
       this.initCovers();
+      this.bindPointerControls();
+    }
+
+    bindPointerControls() {
+      this.canvas.addEventListener('pointerdown', (event) => this.onPointerDown(event));
+      window.addEventListener('pointermove', (event) => this.onPointerMove(event));
+      window.addEventListener('pointerup', () => this.onPointerUp());
+      window.addEventListener('pointercancel', () => this.onPointerUp());
+      this.canvas.addEventListener('pointerleave', () => {
+        if (!this.isDragging) this.canvas.style.cursor = 'default';
+      });
+    }
+
+    onPointerDown(event: PointerEvent) {
+      const hitCover = this.getCoverAtPoint(event.clientX, event.clientY);
+      if (!hitCover) return;
+
+      this.isDragging = true;
+      this.lastPointerX = event.clientX;
+      this.canvas.style.cursor = 'grabbing';
+      this.canvas.setPointerCapture(event.pointerId);
+      event.preventDefault();
+    }
+
+    onPointerMove(event: PointerEvent) {
+      if (this.isDragging) {
+        const dx = event.clientX - this.lastPointerX;
+        this.lastPointerX = event.clientX;
+        this.userRotation += dx * 0.01;
+        return;
+      }
+
+      const hoveredCover = this.getCoverAtPoint(event.clientX, event.clientY);
+      this.canvas.style.cursor = hoveredCover ? 'grab' : 'default';
+    }
+
+    onPointerUp() {
+      this.isDragging = false;
+      this.canvas.style.cursor = 'default';
+    }
+
+    getCoverAtPoint(clientX: number, clientY: number): CoverEntry | null {
+      const rect = this.canvas.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+
+      for (let i = this.coverHitRegions.length - 1; i >= 0; i--) {
+        const region = this.coverHitRegions[i];
+        if (
+          x >= region.x &&
+          !(x > region.x + region.w) &&
+          y >= region.y &&
+          !(y > region.y + region.h)
+        ) {
+          return region.cover;
+        }
+      }
+      return null;
     }
 
     /** Preload book cover images and set orbital positions */
@@ -215,7 +278,7 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
       const { ctx, w, h, cx, cy, r } = this;
       ctx.clearRect(0, 0, w, h);
 
-      const rotY = time * 0.00022;
+      const rotY = time * this.rotationSpeed + this.userRotation;
 
       // === BLOOM GLOW ===
       const g1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 1.7);
@@ -478,6 +541,7 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
     /** Draw orbiting book covers on the globe surface */
     drawCovers(rotY: number) {
       const { ctx, r } = this;
+      this.coverHitRegions = [];
 
       // Sort covers by depth so back-face covers draw first
       const projected = this.covers.map((cover) => {
@@ -533,6 +597,11 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
         }
 
         ctx.restore();
+
+        // Track interactive regions for pointer hit-testing (front-facing only).
+        if (depth > 0.45) {
+          this.coverHitRegions.push({ x: dx, y: dy, w: cw, h: ch, cover });
+        }
       }
     }
 
