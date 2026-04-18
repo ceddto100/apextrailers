@@ -507,6 +507,14 @@ const featuredBooks = BOOKS.slice(0, 3);
       if (activeCard) closeFocusedCard();
     });
 
+    // Close focus before tab animations run so the card is never trapped in a
+    // hidden page stacking context (which would put it behind the backdrop).
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (activeCard) closeFocusedCard();
+      });
+    });
+
     document.querySelectorAll('.video-card').forEach((card) => {
       if (card.dataset.focusInit === 'true') return;
 
@@ -546,6 +554,7 @@ const featuredBooks = BOOKS.slice(0, 3);
     initPanels();
     initFilter();
     initHomeCTAs();
+    initVideoFocus();
   });
 </script>
 
