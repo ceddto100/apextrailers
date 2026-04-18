@@ -36,7 +36,7 @@ const featuredBooks = BOOKS.slice(0, 3);
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {featuredBooks.map((book, i) => (
-            <TrailerCard book={book} index={i} />
+            <TrailerCard book={book} index={i} panelIdPrefix="home-clips" />
           ))}
         </div>
       </div>
@@ -99,7 +99,7 @@ const featuredBooks = BOOKS.slice(0, 3);
         <!-- Clips grid — 9:16 vertical cards -->
         <div class="clips-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {BOOKS.map((book, i) => (
-            <TrailerCard book={book} index={i} />
+            <TrailerCard book={book} index={i} panelIdPrefix="clips-page" />
           ))}
         </div>
       </div>
@@ -194,26 +194,29 @@ const featuredBooks = BOOKS.slice(0, 3);
     });
   }
 
-  // Hover-to-play for Cloudinary videos
-  function initVideoHover() {
+  // Keep overlay icon state in sync with each video's actual playback state
+  function initVideoPlayback() {
     document.querySelectorAll('.video-card').forEach(card => {
       const video = card.querySelector<HTMLVideoElement>('.video-player');
       const playIcon = card.querySelector('.play-icon');
       const pauseIcon = card.querySelector('.pause-icon');
-      if (!video) return;
+      if (!video || card.dataset.videoInit === 'true') return;
 
-      card.addEventListener('mouseenter', () => {
-        video.play().catch(() => {});
-        playIcon?.classList.add('hidden');
-        pauseIcon?.classList.remove('hidden');
-      });
-
-      card.addEventListener('mouseleave', () => {
-        video.pause();
-        video.currentTime = 0;
+      const showPlayIcon = () => {
         playIcon?.classList.remove('hidden');
         pauseIcon?.classList.add('hidden');
-      });
+      };
+
+      const showPauseIcon = () => {
+        playIcon?.classList.add('hidden');
+        pauseIcon?.classList.remove('hidden');
+      };
+
+      showPlayIcon();
+      video.addEventListener('play', showPauseIcon);
+      video.addEventListener('pause', showPlayIcon);
+      video.addEventListener('ended', showPlayIcon);
+      card.dataset.videoInit = 'true';
     });
   }
 
@@ -341,7 +344,7 @@ const featuredBooks = BOOKS.slice(0, 3);
 
   document.addEventListener('DOMContentLoaded', () => {
     initPageAnimations();
-    initVideoHover();
+    initVideoPlayback();
     initPanels();
     initFilter();
     initHomeCTAs();
