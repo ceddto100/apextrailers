@@ -194,26 +194,29 @@ const featuredBooks = BOOKS.slice(0, 3);
     });
   }
 
-  // Hover-to-play for Cloudinary videos
-  function initVideoHover() {
+  // Keep overlay icon state in sync with each video's actual playback state
+  function initVideoPlayback() {
     document.querySelectorAll('.video-card').forEach(card => {
       const video = card.querySelector<HTMLVideoElement>('.video-player');
       const playIcon = card.querySelector('.play-icon');
       const pauseIcon = card.querySelector('.pause-icon');
-      if (!video) return;
+      if (!video || card.dataset.videoInit === 'true') return;
 
-      card.addEventListener('mouseenter', () => {
-        video.play().catch(() => {});
-        playIcon?.classList.add('hidden');
-        pauseIcon?.classList.remove('hidden');
-      });
-
-      card.addEventListener('mouseleave', () => {
-        video.pause();
-        video.currentTime = 0;
+      const showPlayIcon = () => {
         playIcon?.classList.remove('hidden');
         pauseIcon?.classList.add('hidden');
-      });
+      };
+
+      const showPauseIcon = () => {
+        playIcon?.classList.add('hidden');
+        pauseIcon?.classList.remove('hidden');
+      };
+
+      showPlayIcon();
+      video.addEventListener('play', showPauseIcon);
+      video.addEventListener('pause', showPlayIcon);
+      video.addEventListener('ended', showPlayIcon);
+      card.dataset.videoInit = 'true';
     });
   }
 
@@ -341,7 +344,7 @@ const featuredBooks = BOOKS.slice(0, 3);
 
   document.addEventListener('DOMContentLoaded', () => {
     initPageAnimations();
-    initVideoHover();
+    initVideoPlayback();
     initPanels();
     initFilter();
     initHomeCTAs();
