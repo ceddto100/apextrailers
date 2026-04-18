@@ -360,8 +360,11 @@ const featuredBooks = BOOKS.slice(0, 3);
       if (activeCard) closeFocusedCard();
 
       const rect = card.getBoundingClientRect();
-      const targetWidth = Math.min(window.innerWidth * 0.88, 720);
-      const scale = targetWidth / rect.width;
+      const maxFocusWidth = window.innerWidth * 0.92;
+      const maxFocusHeight = window.innerHeight * 0.9;
+      const scaleX = maxFocusWidth / rect.width;
+      const scaleY = maxFocusHeight / rect.height;
+      const scale = Math.min(scaleX, scaleY);
       const cardCenterX = rect.left + rect.width / 2;
       const cardCenterY = rect.top + rect.height / 2;
       const viewportCenterX = window.innerWidth / 2;
