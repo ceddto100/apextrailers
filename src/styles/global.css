@@ -13,11 +13,11 @@
   --border:       #242424;
   --border-2:     #2E2E2E;
 
-  /* Accent — red spectrum */
-  --accent:       #EF4444;
-  --accent-dim:   #DC2626;
-  --accent-glow:  rgba(239, 68, 68, 0.12);
-  --accent-glow-strong: rgba(239, 68, 68, 0.25);
+  /* Accent — silver spectrum */
+  --accent:       #C0C0C0;
+  --accent-dim:   #808080;
+  --accent-glow:  rgba(192, 192, 192, 0.12);
+  --accent-glow-strong: rgba(192, 192, 192, 0.25);
 
   /* Text */
   --text:         #F0EDE8;

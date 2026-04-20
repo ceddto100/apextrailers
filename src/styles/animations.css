@@ -66,9 +66,9 @@
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(220, 38, 38, 0.18) 0%,
-    rgba(220, 38, 38, 0.06) 35%,
-    rgba(153, 27, 27, 0.02) 60%,
+    rgba(192, 192, 192, 0.12) 0%,
+    rgba(160, 160, 160, 0.05) 35%,
+    rgba(120, 120, 120, 0.015) 60%,
     transparent 75%
   );
   opacity: 0;
@@ -103,9 +103,9 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(220, 38, 38, 0.04) 20%,
-    rgba(220, 38, 38, 0.09) 45%,
-    rgba(220, 38, 38, 0.04) 70%,
+    rgba(200, 200, 200, 0.04) 20%,
+    rgba(220, 220, 220, 0.08) 45%,
+    rgba(200, 200, 200, 0.04) 70%,
     transparent 100%
   );
   filter: blur(12px);
@@ -115,9 +115,9 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(185, 28, 28, 0.04) 20%,
-    rgba(185, 28, 28, 0.08) 50%,
-    rgba(185, 28, 28, 0.04) 75%,
+    rgba(160, 160, 160, 0.03) 20%,
+    rgba(190, 190, 190, 0.06) 50%,
+    rgba(160, 160, 160, 0.03) 75%,
     transparent 100%
   );
   filter: blur(25px);
@@ -145,7 +145,7 @@
   width: var(--size);
   height: var(--size);
   border-radius: 50%;
-  background: rgba(220, 38, 38, 0.5);
+  background: rgba(200, 200, 200, 0.45);
   animation: particleFloat var(--dur) var(--delay) ease-in-out infinite;
   will-change: transform, opacity;
 }
