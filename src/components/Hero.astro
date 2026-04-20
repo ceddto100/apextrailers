@@ -13,9 +13,6 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
 ---
 
 <section class="relative w-full min-h-screen flex items-center overflow-hidden">
-  <!-- Layer 0: Base background -->
-  <div class="absolute inset-0" style="background: var(--bg);" aria-hidden="true"></div>
-
   <!-- Layer 1: Ambient radial glow behind globe -->
   <div class="hero-ambient-glow" aria-hidden="true"></div>
 
@@ -71,7 +68,7 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
       <!-- CTAs -->
       <div class="hero-cta flex flex-wrap gap-4">
         <button
-          class="group inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase px-7 py-3.5 bg-accent text-bg rounded-full hover:bg-white transition-colors duration-200 hover:shadow-[0_0_30px_rgba(167,139,250,0.3)]"
+          class="group inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase px-7 py-3.5 bg-accent text-bg rounded-full hover:bg-white transition-colors duration-200 hover:shadow-[0_0_30px_rgba(200,200,200,0.25)]"
           data-tab-target="clips"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="transition-transform group-hover:scale-110"><path d="M8 5v14l11-7z"/></svg>
@@ -220,9 +217,9 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
 
       // === BLOOM GLOW ===
       const g1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 1.7);
-      g1.addColorStop(0, 'rgba(124, 58, 237, 0.12)');
-      g1.addColorStop(0.25, 'rgba(124, 58, 237, 0.06)');
-      g1.addColorStop(0.5, 'rgba(76, 29, 149, 0.025)');
+      g1.addColorStop(0, 'rgba(200, 200, 200, 0.09)');
+      g1.addColorStop(0.25, 'rgba(180, 180, 180, 0.04)');
+      g1.addColorStop(0.55, 'rgba(140, 140, 140, 0.015)');
       g1.addColorStop(1, 'transparent');
       ctx.fillStyle = g1;
       ctx.beginPath();
@@ -231,7 +228,7 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
 
       // === GRID — Back-face pass (dim) ===
       ctx.save();
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.035)';
+      ctx.strokeStyle = 'rgba(160, 160, 160, 0.04)';
       ctx.lineWidth = 0.5;
 
       // Back latitude lines
@@ -246,13 +243,13 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
 
       // === GRID — Front-face pass (bright) ===
       ctx.save();
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.14)';
+      ctx.strokeStyle = 'rgba(210, 210, 210, 0.22)';
       ctx.lineWidth = 0.7;
 
       for (let lat = -75; lat <= 75; lat += 15) {
         this.drawLatSegments(lat, rotY, true);
       }
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.10)';
+      ctx.strokeStyle = 'rgba(190, 190, 190, 0.16)';
       for (let lon = 0; lon < 360; lon += 18) {
         this.drawLonSegments(lon, rotY, true);
       }
@@ -270,17 +267,36 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
       // === INTERSECTION DOTS (front-face only) ===
       this.drawDots(rotY);
 
+      // === SPECULAR HIGHLIGHT (shiny silver) ===
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.clip();
+      const specX = cx - r * 0.3;
+      const specY = cy - r * 0.3;
+      const spec = ctx.createRadialGradient(specX, specY, 0, specX, specY, r * 0.8);
+      spec.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+      spec.addColorStop(0.3, 'rgba(255, 255, 255, 0.08)');
+      spec.addColorStop(0.65, 'rgba(200, 200, 200, 0.02)');
+      spec.addColorStop(1, 'transparent');
+      ctx.fillStyle = spec;
+      ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+      ctx.restore();
+
       // === OUTER RIM ===
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.08)';
+      ctx.strokeStyle = 'rgba(210, 210, 210, 0.18)';
       ctx.lineWidth = 1.2;
+      ctx.shadowColor = 'rgba(255,255,255,0.3)';
+      ctx.shadowBlur = 6;
       ctx.stroke();
+      ctx.shadowBlur = 0;
 
       // Subtle secondary rim glow
       ctx.beginPath();
       ctx.arc(cx, cy, r + 4, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.03)';
+      ctx.strokeStyle = 'rgba(200, 200, 200, 0.05)';
       ctx.lineWidth = 6;
       ctx.stroke();
     }
@@ -357,7 +373,7 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
             ctx.beginPath();
             ctx.moveTo(points[0].x, points[0].y);
             for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
-            ctx.strokeStyle = 'rgba(167, 139, 250, 0.3)';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
             ctx.lineWidth = 1;
             ctx.stroke();
           }
@@ -434,15 +450,15 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
         for (let i = 1; i < seg.length; i++) {
           ctx.lineTo(terrainTop[seg[i]].x, terrainTop[seg[i]].y);
         }
-        ctx.strokeStyle = 'rgba(167, 139, 250, 0.55)';
+        ctx.strokeStyle = 'rgba(230, 230, 230, 0.85)';
         ctx.lineWidth = 1.5;
-        ctx.shadowColor = 'rgba(167, 139, 250, 0.5)';
-        ctx.shadowBlur = 15;
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.9)';
+        ctx.shadowBlur = 14;
         ctx.stroke();
         ctx.shadowBlur = 0;
 
         // Secondary glow pass
-        ctx.strokeStyle = 'rgba(124, 58, 237, 0.2)';
+        ctx.strokeStyle = 'rgba(200, 200, 200, 0.22)';
         ctx.lineWidth = 4;
         ctx.stroke();
       }
@@ -463,13 +479,13 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
             // Glow
             ctx.beginPath();
             ctx.arc(p.x, p.y, size + 2, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(167, 139, 250, ${alpha * 0.15})`;
+            ctx.fillStyle = `rgba(220, 220, 220, ${alpha * 0.2})`;
             ctx.fill();
 
             // Core dot
             ctx.beginPath();
             ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(167, 139, 250, ${alpha})`;
+            ctx.fillStyle = `rgba(240, 240, 240, ${alpha})`;
             ctx.fill();
           }
         }

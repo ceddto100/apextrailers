@@ -7,17 +7,17 @@
 :root {
   /* Core */
   --bg:           #070707;
-  --surface:      #0F0F0F;
-  --surface-2:    #161616;
-  --surface-3:    #1E1E1E;
+  --surface:      rgba(14, 14, 14, 0.82);
+  --surface-2:    rgba(20, 20, 20, 0.88);
+  --surface-3:    rgba(28, 28, 28, 0.92);
   --border:       #242424;
   --border-2:     #2E2E2E;
 
-  /* Accent — violet spectrum */
-  --accent:       #A78BFA;
-  --accent-dim:   #7C3AED;
-  --accent-glow:  rgba(167, 139, 250, 0.12);
-  --accent-glow-strong: rgba(167, 139, 250, 0.25);
+  /* Accent — silver spectrum */
+  --accent:       #C0C0C0;
+  --accent-dim:   #808080;
+  --accent-glow:  rgba(192, 192, 192, 0.12);
+  --accent-glow-strong: rgba(192, 192, 192, 0.25);
 
   /* Text */
   --text:         #F0EDE8;
