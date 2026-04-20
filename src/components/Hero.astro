@@ -13,8 +13,8 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
 ---
 
 <section class="relative w-full min-h-screen flex items-center overflow-hidden">
-  <!-- Layer 0: Base background -->
-  <div class="absolute inset-0" style="background: var(--bg);" aria-hidden="true"></div>
+  <!-- Layer 0: Polygon mesh background -->
+  <canvas id="hero-bg-poly" class="absolute inset-0 w-full h-full" aria-hidden="true"></canvas>
 
   <!-- Layer 1: Ambient radial glow behind globe -->
   <div class="hero-ambient-glow" aria-hidden="true"></div>
@@ -71,7 +71,7 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
       <!-- CTAs -->
       <div class="hero-cta flex flex-wrap gap-4">
         <button
-          class="group inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase px-7 py-3.5 bg-accent text-bg rounded-full hover:bg-white transition-colors duration-200 hover:shadow-[0_0_30px_rgba(167,139,250,0.3)]"
+          class="group inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase px-7 py-3.5 bg-accent text-bg rounded-full hover:bg-white transition-colors duration-200 hover:shadow-[0_0_30px_rgba(220,38,38,0.35)]"
           data-tab-target="clips"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="transition-transform group-hover:scale-110"><path d="M8 5v14l11-7z"/></svg>
@@ -106,6 +106,94 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
 
 <script>
   import gsap from 'gsap';
+
+  /* ========================================
+     POLYGON MESH BACKGROUND — Canvas renderer
+     ======================================== */
+  class PolyBackground {
+    private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
+
+    constructor(canvas: HTMLCanvasElement) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d')!;
+      this.render();
+      window.addEventListener('resize', () => this.render());
+    }
+
+    render() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const parent = this.canvas.parentElement!;
+      const w = parent.offsetWidth || window.innerWidth;
+      const h = parent.offsetHeight || window.innerHeight;
+      this.canvas.width = w * dpr;
+      this.canvas.height = h * dpr;
+      this.canvas.style.width = w + 'px';
+      this.canvas.style.height = h + 'px';
+      this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      this.draw(w, h);
+    }
+
+    draw(w: number, h: number) {
+      const ctx = this.ctx;
+      ctx.fillStyle = '#070707';
+      ctx.fillRect(0, 0, w, h);
+
+      const cols = 14;
+      const rows = 9;
+      const cellW = w / cols;
+      const cellH = h / rows;
+
+      const pts: [number, number][] = [];
+      for (let r = 0; r <= rows; r++) {
+        for (let c = 0; c <= cols; c++) {
+          const edge = r === 0 || r === rows || c === 0 || c === cols;
+          const jx = edge ? 0 : (Math.random() - 0.5) * cellW * 0.85;
+          const jy = edge ? 0 : (Math.random() - 0.5) * cellH * 0.85;
+          pts.push([c * cellW + jx, r * cellH + jy]);
+        }
+      }
+
+      const idx = (r: number, c: number) => r * (cols + 1) + c;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const a = pts[idx(r, c)];
+          const b = pts[idx(r, c + 1)];
+          const cc = pts[idx(r + 1, c)];
+          const d = pts[idx(r + 1, c + 1)];
+          this.drawTri(ctx, a, b, cc);
+          this.drawTri(ctx, b, d, cc);
+        }
+      }
+    }
+
+    drawTri(ctx: CanvasRenderingContext2D, p1: [number, number], p2: [number, number], p3: [number, number]) {
+      const v = 5 + Math.floor(Math.random() * 20);
+      const isGlow = Math.random() < 0.13;
+
+      ctx.beginPath();
+      ctx.moveTo(p1[0], p1[1]);
+      ctx.lineTo(p2[0], p2[1]);
+      ctx.lineTo(p3[0], p3[1]);
+      ctx.closePath();
+
+      ctx.fillStyle = `rgb(${v + 3}, ${Math.floor(v * 0.65)}, ${Math.floor(v * 0.65)})`;
+      ctx.fill();
+
+      if (isGlow) {
+        ctx.strokeStyle = `rgba(220, 38, 38, ${0.3 + Math.random() * 0.45})`;
+        ctx.lineWidth = 1.2;
+        ctx.shadowColor = 'rgba(220, 38, 38, 0.9)';
+        ctx.shadowBlur = 10;
+      } else {
+        ctx.strokeStyle = `rgba(160, 30, 30, ${0.05 + Math.random() * 0.1})`;
+        ctx.lineWidth = 0.5;
+        ctx.shadowBlur = 0;
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+  }
 
   /* ========================================
      WIREFRAME GLOBE — Canvas renderer
@@ -220,9 +308,9 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
 
       // === BLOOM GLOW ===
       const g1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 1.7);
-      g1.addColorStop(0, 'rgba(124, 58, 237, 0.12)');
-      g1.addColorStop(0.25, 'rgba(124, 58, 237, 0.06)');
-      g1.addColorStop(0.5, 'rgba(76, 29, 149, 0.025)');
+      g1.addColorStop(0, 'rgba(220, 38, 38, 0.14)');
+      g1.addColorStop(0.25, 'rgba(220, 38, 38, 0.06)');
+      g1.addColorStop(0.5, 'rgba(153, 27, 27, 0.025)');
       g1.addColorStop(1, 'transparent');
       ctx.fillStyle = g1;
       ctx.beginPath();
@@ -231,7 +319,7 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
 
       // === GRID — Back-face pass (dim) ===
       ctx.save();
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.035)';
+      ctx.strokeStyle = 'rgba(220, 38, 38, 0.04)';
       ctx.lineWidth = 0.5;
 
       // Back latitude lines
@@ -246,13 +334,13 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
 
       // === GRID — Front-face pass (bright) ===
       ctx.save();
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.14)';
+      ctx.strokeStyle = 'rgba(220, 38, 38, 0.18)';
       ctx.lineWidth = 0.7;
 
       for (let lat = -75; lat <= 75; lat += 15) {
         this.drawLatSegments(lat, rotY, true);
       }
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.10)';
+      ctx.strokeStyle = 'rgba(220, 38, 38, 0.12)';
       for (let lon = 0; lon < 360; lon += 18) {
         this.drawLonSegments(lon, rotY, true);
       }
@@ -273,14 +361,14 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
       // === OUTER RIM ===
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.08)';
+      ctx.strokeStyle = 'rgba(220, 38, 38, 0.12)';
       ctx.lineWidth = 1.2;
       ctx.stroke();
 
       // Subtle secondary rim glow
       ctx.beginPath();
       ctx.arc(cx, cy, r + 4, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.03)';
+      ctx.strokeStyle = 'rgba(220, 38, 38, 0.04)';
       ctx.lineWidth = 6;
       ctx.stroke();
     }
@@ -357,7 +445,7 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
             ctx.beginPath();
             ctx.moveTo(points[0].x, points[0].y);
             for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
-            ctx.strokeStyle = 'rgba(167, 139, 250, 0.3)';
+            ctx.strokeStyle = 'rgba(220, 38, 38, 0.4)';
             ctx.lineWidth = 1;
             ctx.stroke();
           }
@@ -434,15 +522,15 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
         for (let i = 1; i < seg.length; i++) {
           ctx.lineTo(terrainTop[seg[i]].x, terrainTop[seg[i]].y);
         }
-        ctx.strokeStyle = 'rgba(167, 139, 250, 0.55)';
+        ctx.strokeStyle = 'rgba(220, 38, 38, 0.7)';
         ctx.lineWidth = 1.5;
-        ctx.shadowColor = 'rgba(167, 139, 250, 0.5)';
+        ctx.shadowColor = 'rgba(220, 38, 38, 0.8)';
         ctx.shadowBlur = 15;
         ctx.stroke();
         ctx.shadowBlur = 0;
 
         // Secondary glow pass
-        ctx.strokeStyle = 'rgba(124, 58, 237, 0.2)';
+        ctx.strokeStyle = 'rgba(185, 28, 28, 0.25)';
         ctx.lineWidth = 4;
         ctx.stroke();
       }
@@ -463,13 +551,13 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
             // Glow
             ctx.beginPath();
             ctx.arc(p.x, p.y, size + 2, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(167, 139, 250, ${alpha * 0.15})`;
+            ctx.fillStyle = `rgba(220, 38, 38, ${alpha * 0.15})`;
             ctx.fill();
 
             // Core dot
             ctx.beginPath();
             ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(167, 139, 250, ${alpha})`;
+            ctx.fillStyle = `rgba(220, 38, 38, ${alpha})`;
             ctx.fill();
           }
         }
@@ -612,6 +700,10 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
      INIT — Globe + GSAP Entrance Sequence
      ======================================== */
   function initHero() {
+    // Start polygon mesh background
+    const bgCanvas = document.getElementById('hero-bg-poly') as HTMLCanvasElement;
+    if (bgCanvas) new PolyBackground(bgCanvas);
+
     // Start the wireframe globe
     const canvas = document.getElementById('hero-globe') as HTMLCanvasElement;
     if (canvas) {
