@@ -10,9 +10,9 @@ export default {
       },
       colors: {
         bg: '#070707',
-        surface: '#0F0F0F',
-        'surface-2': '#161616',
-        'surface-3': '#1E1E1E',
+        surface: 'rgba(14, 14, 14, 0.82)',
+        'surface-2': 'rgba(20, 20, 20, 0.88)',
+        'surface-3': 'rgba(28, 28, 28, 0.92)',
         border: '#242424',
         'border-2': '#2E2E2E',
         accent: '#C0C0C0',
