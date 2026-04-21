@@ -106,14 +106,14 @@ body::after {
 }
 
 /* Video card grid */
-.clips-grid .video-card,
+.trailers-grid .video-card,
 .video-card {
   display: flex;
   flex-direction: column;
 }
 
 /* Ensure grid items are full height */
-.clips-grid,
+.trailers-grid,
 .book-grid {
   align-items: start;
 }

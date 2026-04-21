@@ -55,24 +55,23 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
 
       <!-- Title -->
       <h1 class="font-display tracking-wide leading-[0.9] mb-6">
-        <span class="hero-title-line-1 text-[clamp(52px,11vw,130px)]">WORDS THAT</span>
-        <span class="hero-title-line-2 text-[clamp(52px,11vw,130px)]">MOVE YOU.</span>
+        <span class="hero-title-line-1 text-[clamp(52px,11vw,130px)]">EVOKE YOUR</span>
+        <span class="hero-title-line-2 text-[clamp(52px,11vw,130px)]">THOUGHTS.</span>
       </h1>
 
       <!-- Subtitle -->
       <p class="hero-subtitle max-w-md text-text-2 text-lg md:text-xl leading-relaxed mb-10">
-        Vertical short-form clips for books that demand your attention.<br/>
-        Watch. Click. Read.
+        Examining the personal evolutions and hidden realities that shape our world.
       </p>
 
       <!-- CTAs -->
       <div class="hero-cta flex flex-wrap gap-4">
         <button
           class="group inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase px-7 py-3.5 bg-accent text-bg rounded-full hover:bg-white transition-colors duration-200 hover:shadow-[0_0_30px_rgba(200,200,200,0.25)]"
-          data-tab-target="clips"
+          data-tab-target="trailers"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="transition-transform group-hover:scale-110"><path d="M8 5v14l11-7z"/></svg>
-          Watch Clips
+          Watch Trailers
         </button>
         <button
           class="inline-flex items-center gap-3 font-mono text-xs tracking-widest uppercase px-7 py-3.5 border border-border-2 text-text-2 rounded-full hover:border-accent hover:text-accent transition-all duration-200"
@@ -85,20 +84,6 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
     </div>
   </div>
 
-  <!-- Layer 6: Stats bar at bottom -->
-  <div class="hero-stats absolute bottom-0 left-0 right-0 z-10 border-t border-border">
-    <div class="flex items-center justify-center gap-4 md:gap-8 px-6 py-4 text-center flex-wrap">
-      <div class="font-mono text-xs tracking-widest text-text-3 uppercase">
-        <span class="stat-number text-text font-display text-lg" data-target={BOOKS.length}>0</span> Titles
-      </div>
-      <span class="text-border-2 hidden md:inline">&middot;</span>
-      <div class="font-mono text-xs tracking-widest text-text-3 uppercase">9:16 Vertical Clips</div>
-      <span class="text-border-2 hidden md:inline">&middot;</span>
-      <div class="font-mono text-xs tracking-widest text-text-3 uppercase">Instant Access</div>
-      <span class="text-border-2 hidden md:inline">&middot;</span>
-      <div class="font-mono text-xs tracking-widest text-text-3 uppercase">No DRM</div>
-    </div>
-  </div>
 </section>
 
 <script>
@@ -687,25 +672,7 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
       { opacity: 0 },
       { opacity: 1, duration: 2, ease: 'power1.out' },
       '-=1'
-    )
-    // 9. Stats bar rises
-    .fromTo('.hero-stats',
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' },
-      '-=1.2'
     );
-
-    // Counter animation for stat numbers
-    document.querySelectorAll('.stat-number').forEach((el) => {
-      const target = parseInt(el.getAttribute('data-target') || '0', 10);
-      gsap.fromTo(el, { textContent: '0' }, {
-        textContent: target,
-        duration: 1.5,
-        delay: 2,
-        ease: 'power2.out',
-        snap: { textContent: 1 },
-      });
-    });
 
     // Hero CTA buttons → switch tabs
     document.querySelectorAll('[data-tab-target]').forEach(btn => {
