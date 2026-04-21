@@ -18,17 +18,17 @@ const featuredBooks = BOOKS.slice(0, 3);
   <div id="page-home" class="page active">
     <Hero />
 
-    <!-- Featured Clips section -->
+    <!-- Featured Trailers section -->
     <section class="py-20 px-6 md:px-12 border-t border-border">
       <div class="max-w-6xl mx-auto">
         <div class="flex items-end justify-between mb-10 gsap-fade-up">
           <div>
             <span class="font-mono text-xs tracking-widest uppercase text-accent mb-2 block">Latest Drops</span>
-            <h2 class="font-display text-[clamp(32px,5vw,56px)] tracking-wide leading-[0.95]">FEATURED CLIPS</h2>
+            <h2 class="font-display text-[clamp(32px,5vw,56px)] tracking-wide leading-[0.95]">FEATURED TRAILERS</h2>
           </div>
           <button
             class="font-mono text-xs tracking-widest uppercase text-text-3 hover:text-accent transition-colors duration-200 flex items-center gap-2"
-            data-tab-target="clips"
+            data-tab-target="trailers"
           >
             View All &rarr;
           </button>
@@ -36,7 +36,7 @@ const featuredBooks = BOOKS.slice(0, 3);
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {featuredBooks.map((book, i) => (
-            <TrailerCard book={book} index={i} panelIdPrefix="home-clips" />
+            <TrailerCard book={book} index={i} panelIdPrefix="home-trailers" />
           ))}
         </div>
       </div>
@@ -82,24 +82,24 @@ const featuredBooks = BOOKS.slice(0, 3);
     <Footer />
   </div>
 
-  <!-- PAGE: Clips -->
-  <div id="page-clips" class="page">
+  <!-- PAGE: Trailers -->
+  <div id="page-trailers" class="page">
     <section class="pt-28 pb-16 px-6 md:px-12">
       <div class="max-w-6xl mx-auto">
         <!-- Section header -->
         <div class="mb-10 gsap-fade-up">
           <span class="font-mono text-xs tracking-widest uppercase text-accent mb-2 block">Short-Form</span>
-          <h2 class="font-display text-[clamp(36px,6vw,64px)] tracking-wide leading-[0.95] mb-4">ALL CLIPS</h2>
+          <h2 class="font-display text-[clamp(36px,6vw,64px)] tracking-wide leading-[0.95] mb-4">ALL TRAILERS</h2>
           <p class="text-text-2 max-w-lg">9:16 vertical promos for every book in the collection. Watch, then click to read.</p>
         </div>
 
         <!-- Filter bar (reuses genre filter) -->
         <FilterBar />
 
-        <!-- Clips grid — 9:16 vertical cards -->
-        <div class="clips-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Trailers grid — 9:16 vertical cards -->
+        <div class="trailers-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {BOOKS.map((book, i) => (
-            <TrailerCard book={book} index={i} panelIdPrefix="clips-page" />
+            <TrailerCard book={book} index={i} panelIdPrefix="trailers-page" />
           ))}
         </div>
       </div>
