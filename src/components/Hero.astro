@@ -43,8 +43,8 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
   </div>
 
   <!-- Layer 5: Hero content (left-aligned, above globe) -->
-  <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 pt-28 pb-36">
-    <div class="max-w-xl">
+  <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 pt-28 pb-36 pointer-events-none">
+    <div class="max-w-xl pointer-events-auto">
       <!-- Badge -->
       <div class="hero-badge mb-6">
         <span class="inline-flex items-center gap-2 glass rounded-full px-4 py-2 font-mono text-xs tracking-widest uppercase text-text-2">
@@ -103,6 +103,16 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
     loaded: boolean;
   }
 
+  /** Screen-space rectangle of a cover drawn this frame (for hit testing) */
+  interface VisibleCover {
+    cover: CoverEntry;
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    z: number;
+  }
+
   class WireframeGlobe {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
@@ -115,6 +125,14 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
     private animId = 0;
     private covers: CoverEntry[] = [];
 
+    // Drag state — manual rotation offset stacks onto auto-rotation
+    private dragOffsetRotY = 0;
+    private isDragging = false;
+    private lastPointerX = 0;
+    private activePointerId: number | null = null;
+    // Populated every frame by drawCovers, used for pointer hit testing
+    private visibleCovers: VisibleCover[] = [];
+
     constructor(canvas: HTMLCanvasElement) {
       this.canvas = canvas;
       this.ctx = canvas.getContext('2d')!;
@@ -122,6 +140,68 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
       this.resize();
       window.addEventListener('resize', () => this.resize());
       this.initCovers();
+      this.setupDragListeners();
+    }
+
+    /** Find the front-most cover whose rect contains the pointer, or null */
+    hitTestCover(clientX: number, clientY: number): VisibleCover | null {
+      const rect = this.canvas.getBoundingClientRect();
+      const px = clientX - rect.left;
+      const py = clientY - rect.top;
+      let best: VisibleCover | null = null;
+      for (const vc of this.visibleCovers) {
+        if (px >= vc.x && px <= vc.x + vc.w && py >= vc.y && py <= vc.y + vc.h) {
+          if (!best || vc.z > best.z) best = vc;
+        }
+      }
+      return best;
+    }
+
+    /** Wire up pointer events for click-drag rotation on visible covers */
+    setupDragListeners() {
+      const canvas = this.canvas;
+      // Parent sets pointer-events: none; re-enable on the canvas itself
+      canvas.style.pointerEvents = 'auto';
+      canvas.style.touchAction = 'pan-y';
+      canvas.style.cursor = 'default';
+
+      canvas.addEventListener('pointerdown', (e) => {
+        const hit = this.hitTestCover(e.clientX, e.clientY);
+        if (!hit) return; // Only drag when press lands on a visible cover
+        this.isDragging = true;
+        this.lastPointerX = e.clientX;
+        this.activePointerId = e.pointerId;
+        canvas.style.cursor = 'grabbing';
+        try { canvas.setPointerCapture(e.pointerId); } catch {}
+        e.preventDefault();
+      });
+
+      canvas.addEventListener('pointermove', (e) => {
+        if (this.isDragging) {
+          const dx = e.clientX - this.lastPointerX;
+          this.lastPointerX = e.clientX;
+          // ~0.006 rad per pixel feels natural for a ~600px globe
+          this.dragOffsetRotY += dx * 0.006;
+        } else {
+          const hit = this.hitTestCover(e.clientX, e.clientY);
+          canvas.style.cursor = hit ? 'grab' : 'default';
+        }
+      });
+
+      const endDrag = (e: PointerEvent) => {
+        if (!this.isDragging) return;
+        this.isDragging = false;
+        this.activePointerId = null;
+        try { canvas.releasePointerCapture(e.pointerId); } catch {}
+        const hit = this.hitTestCover(e.clientX, e.clientY);
+        canvas.style.cursor = hit ? 'grab' : 'default';
+      };
+
+      canvas.addEventListener('pointerup', endDrag);
+      canvas.addEventListener('pointercancel', endDrag);
+      canvas.addEventListener('pointerleave', () => {
+        if (!this.isDragging) canvas.style.cursor = 'default';
+      });
     }
 
     /** Preload book cover images and set orbital positions */
@@ -203,7 +283,8 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
       const { ctx, w, h, cx, cy, r } = this;
       ctx.clearRect(0, 0, w, h);
 
-      const rotY = time * 0.00022;
+      // Auto-rotation continues; user drag adds a persistent offset
+      const rotY = time * 0.00022 + this.dragOffsetRotY;
 
       // === BLOOM GLOW ===
       const g1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 1.7);
@@ -485,6 +566,8 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
     /** Draw orbiting book covers on the globe surface */
     drawCovers(rotY: number) {
       const { ctx, r } = this;
+      // Reset per-frame hit-test cache
+      this.visibleCovers = [];
 
       // Sort covers by depth so back-face covers draw first
       const projected = this.covers.map((cover) => {
@@ -511,11 +594,14 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
         const alpha = Math.pow(depth, 1.8) * 0.9;
         if (alpha < 0.03) continue;
 
-        ctx.save();
-        ctx.globalAlpha = alpha;
-
         const dx = p.x - cw / 2;
         const dy = p.y - ch / 2;
+
+        // Record hit-test rect for this visible cover (front-most wins via z)
+        this.visibleCovers.push({ cover, x: dx, y: dy, w: cw, h: ch, z: p.z });
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
 
         if (cover.loaded && cover.img) {
           // === Draw real image ===
