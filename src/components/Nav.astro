@@ -3,13 +3,14 @@ const tabs = ['Home', 'Trailers', 'Books'];
 ---
 
 <nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-  <div class="nav-inner flex items-center justify-between px-6 md:px-12 py-5">
-    <a href="/" class="nav-logo flex items-baseline gap-2" data-tab-link="home">
-      <span class="font-display text-2xl tracking-widest text-accent">THOUGHTS EVOKED</span>
-      <span class="font-mono text-[10px] text-text-3 tracking-widest">/MEDIA</span>
+  <div class="nav-inner flex items-center justify-between px-6 md:px-12 py-4 md:py-5">
+    <a href="/" class="nav-logo flex items-baseline gap-2 min-w-0" data-tab-link="home">
+      <span class="font-display text-lg md:text-2xl tracking-widest text-accent whitespace-nowrap">THOUGHTS EVOKED</span>
+      <span class="font-mono text-[10px] text-text-3 tracking-widest hidden md:inline">/MEDIA</span>
     </a>
 
-    <div class="tab-group flex gap-1">
+    <!-- Desktop tabs -->
+    <div class="tab-group hidden md:flex gap-1">
       {tabs.map((tab) => (
         <button
           class:list={[
@@ -22,8 +23,76 @@ const tabs = ['Home', 'Trailers', 'Books'];
         </button>
       ))}
     </div>
+
+    <!-- Mobile menu trigger -->
+    <button
+      id="nav-menu-toggle"
+      class="menu-toggle md:hidden relative w-11 h-11 flex-shrink-0 flex items-center justify-center rounded-full border border-border-2 text-text-2"
+      aria-label="Toggle menu"
+      aria-expanded="false"
+      aria-controls="nav-mobile-menu"
+    >
+      <span class="menu-icon-bar"></span>
+      <span class="menu-icon-bar"></span>
+    </button>
+  </div>
+
+  <!-- Mobile menu panel -->
+  <div id="nav-mobile-menu" class="nav-mobile-menu md:hidden" aria-hidden="true">
+    <div class="flex flex-col px-6 py-3 gap-1">
+      {tabs.map((tab) => (
+        <button
+          class:list={[
+            'tab-btn font-mono text-sm tracking-widest uppercase px-5 py-4 border border-transparent text-text-2 rounded-xl transition-all duration-200 text-left',
+            tab === 'Home' ? 'active' : '',
+          ]}
+          data-tab={tab.toLowerCase()}
+        >
+          {tab}
+        </button>
+      ))}
+    </div>
   </div>
 </nav>
+
+<style>
+  .menu-icon-bar {
+    position: absolute;
+    left: 50%;
+    width: 18px;
+    height: 1.5px;
+    background: currentColor;
+    transform: translateX(-50%);
+    transition: transform 0.25s ease, top 0.25s ease;
+  }
+  .menu-icon-bar:nth-child(1) { top: 18px; }
+  .menu-icon-bar:nth-child(2) { top: 24px; }
+  .menu-toggle.open .menu-icon-bar:nth-child(1) {
+    top: 21px;
+    transform: translateX(-50%) rotate(45deg);
+  }
+  .menu-toggle.open .menu-icon-bar:nth-child(2) {
+    top: 21px;
+    transform: translateX(-50%) rotate(-45deg);
+  }
+
+  .nav-mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    background: rgba(7, 7, 7, 0.97);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid transparent;
+    transition: max-height 0.3s var(--ease-out-expo), border-color 0.3s ease;
+  }
+  .nav-mobile-menu.open {
+    max-height: 320px;
+    border-top-color: var(--border);
+  }
+  .nav-mobile-menu .tab-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+</style>
 
 <script>
   function initNav() {
@@ -88,5 +157,36 @@ const tabs = ['Home', 'Trailers', 'Books'];
     }
   }
 
-  document.addEventListener('DOMContentLoaded', initNav);
+  function initMobileMenu() {
+    const toggle = document.getElementById('nav-menu-toggle');
+    const menu = document.getElementById('nav-mobile-menu');
+    if (!toggle || !menu) return;
+
+    function closeMenu() {
+      toggle!.classList.remove('open');
+      toggle!.setAttribute('aria-expanded', 'false');
+      menu!.classList.remove('open');
+      menu!.setAttribute('aria-hidden', 'true');
+    }
+
+    function openMenu() {
+      toggle!.classList.add('open');
+      toggle!.setAttribute('aria-expanded', 'true');
+      menu!.classList.add('open');
+      menu!.setAttribute('aria-hidden', 'false');
+    }
+
+    toggle.addEventListener('click', () => {
+      menu.classList.contains('open') ? closeMenu() : openMenu();
+    });
+
+    menu.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', closeMenu);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initNav();
+    initMobileMenu();
+  });
 </script>

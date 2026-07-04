@@ -25,8 +25,8 @@ const panelId = `${panelIdPrefix}-${book.id}-${index}`;
   data-cta-label={book.ctaLabel || "Learn More"}
   style={`--card-accent: ${book.accentHex};`}
 >
-  <!-- Video area — 9:16 portrait ratio -->
-  <div class="relative overflow-hidden flex-shrink-0" style="aspect-ratio: 9/16;">
+  <!-- Video area — 9:16 portrait ratio, capped on short mobile viewports so a card doesn't outgrow the screen -->
+  <div class="video-frame relative overflow-hidden flex-shrink-0" style="aspect-ratio: 9/16;">
 
     {hasVideo ? (
       <video
@@ -121,6 +121,22 @@ const panelId = `${panelIdPrefix}-${book.id}-${index}`;
       0 0 0 1px color-mix(in srgb, var(--card-accent) 30%, transparent),
       0 24px 60px rgba(0, 0, 0, 0.5),
       0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Cap card height on short mobile viewports — a strict 9:16 frame otherwise runs
+     taller than the phone showing it, turning the grid into one card per screen. */
+  @media (max-width: 639px) {
+    .video-frame {
+      max-height: 58vh;
+    }
+  }
+
+  /* Hover-gated affordances never fire on touch — show them unconditionally there */
+  @media (hover: none) {
+    .video-card .play-overlay,
+    .video-card .video-overlay {
+      opacity: 1 !important;
+    }
   }
 
   .video-card-focus-active {

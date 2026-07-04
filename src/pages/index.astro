@@ -34,7 +34,7 @@ const featuredBooks = BOOKS.slice(0, 3);
           </button>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {featuredBooks.map((book, i) => (
             <TrailerCard book={book} index={i} panelIdPrefix="home-trailers" />
           ))}
@@ -97,7 +97,7 @@ const featuredBooks = BOOKS.slice(0, 3);
         <FilterBar />
 
         <!-- Trailers grid — 9:16 vertical cards -->
-        <div class="trailers-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="trailers-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {BOOKS.map((book, i) => (
             <TrailerCard book={book} index={i} panelIdPrefix="trailers-page" />
           ))}
@@ -522,6 +522,11 @@ const featuredBooks = BOOKS.slice(0, 3);
       if (!video) return;
 
       video.addEventListener('click', (event) => {
+        // The focus layout pairs the video with a side-by-side companion panel —
+        // there's no room for that below 768px, so let the native video controls
+        // (play, fullscreen, seek) handle it instead.
+        if (window.innerWidth < 768) return;
+
         event.stopPropagation();
 
         if (activeCard === card) {

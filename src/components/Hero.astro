@@ -618,12 +618,25 @@ const particles = Array.from({ length: 35 }, (_, i) => ({
      INIT — Globe + GSAP Entrance Sequence
      ======================================== */
   function initHero() {
-    // Start the wireframe globe
+    // Start the wireframe globe — but only where it's actually visible.
+    // Below 768px .hero-globe-wrap is opacity:0 (see animations.css), so
+    // running its render loop there is pure battery/CPU cost for nothing.
     const canvas = document.getElementById('hero-globe') as HTMLCanvasElement;
-    if (canvas) {
-      const globe = new WireframeGlobe(canvas);
-      globe.start();
+    let globe: WireframeGlobe | null = null;
+
+    function syncGlobeState() {
+      const shouldRun = window.innerWidth >= 768;
+      if (shouldRun && !globe && canvas) {
+        globe = new WireframeGlobe(canvas);
+        globe.start();
+      } else if (!shouldRun && globe) {
+        globe.stop();
+        globe = null;
+      }
     }
+
+    syncGlobeState();
+    window.addEventListener('resize', syncGlobeState);
 
     // Cinematic entrance sequence
     const tl = gsap.timeline({ delay: 0.15 });
